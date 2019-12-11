@@ -4,6 +4,7 @@
 #include "OpenServerCommand.h"
 
   int OpenServerCommand::execute(string * ) {
-      cout<< "you are smart open server";
+      cout<< "open server\n";
+      return 2;
 
 }

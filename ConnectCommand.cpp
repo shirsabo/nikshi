@@ -5,5 +5,6 @@
 #include "ConnectCommand.h"
 #include "Command.h"
 int ConnectCommand::execute(string * ) {
-    cout<< "you are smart var";
+    cout<< "connect command\n";
+    return 3;
 }

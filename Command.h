@@ -12,7 +12,7 @@ using namespace std;
 class Command {
 
 public:
-     int execute(string *) {
+     virtual int execute(string *) {
          return 0;
      };
      ~Command() {}

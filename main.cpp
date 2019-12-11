@@ -15,13 +15,13 @@ string *lexer(char *argv[]);
 
 //void createMap(map<std::__cxx11::string, struct Command> *map);
 
-void createMap(map<string, Command> *pMap);
+void createMap(map<string, Command*> *pMap);
 
 int main(int argsc, char *argv[]) {
     string *array = lexer(argv);
     int index = 0;
     // creating a map of the commands
-    map<string, Command> mp;
+    map<string, Command*> mp;
     createMap(&mp);
     while (index < array->size()) {
         auto pos = mp.find(array[index]);
@@ -29,30 +29,22 @@ int main(int argsc, char *argv[]) {
             //handle the error
             //c = NULL;
         } else {
-            Command c = pos->second;
-            index += c.execute(&array[index]);
+            Command *c = pos->second;
+            index += c->execute(&array[index]);
         }
     }
     return 0;
 }
 
-void createMap(map<string, Command> *pMap) {
+void createMap(map<string, Command*> *pMap) {
     OpenServerCommand *openCommand = new OpenServerCommand;
     ConnectCommand * connect = new ConnectCommand;
     DefineVarCommand *varCommand = new DefineVarCommand;
     //DefineVarCommand * var = new
-    pMap->insert(pair<string, Command>("openDataServer", *openCommand));
-    pMap->insert(pair<string, Command>("connectControlClient", *connect));
-    pMap->insert(pair<string, Command>("var", *varCommand));
+    pMap->insert(pair<string, Command*>("openDataServer", openCommand));
+    pMap->insert(pair<string, Command*>("connectControlClient", connect));
+    pMap->insert(pair<string, Command*>("var", varCommand));
 }
-
-void *creteMap(map<string, Command> map) {
-    OpenServerCommand *openCommand = new OpenServerCommand;
-//DefineVarCommand * var = new
-map.insert(pair<string, Command>("openDataServer", *openCommand));
-map.insert(pair<string, Command>("connectControlClient", *openCommand));
-}
-
 string *lexer(char *argv[]) {
     FILE *file = fopen(argv[1], "r");
     if (file == NULL) {

@@ -4,5 +4,6 @@
 #include "DefineVarCommand.h"
 #include "Command.h"
 int DefineVarCommand::execute(string * ) {
-    cout<< "you are smart var";
+    cout<< "var\n";
+    return 5;
 }
