@@ -3,4 +3,4 @@ project(ex3)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(ex3 main.cpp Command.h OpenServerCommand.cpp OpenServerCommand.h ConnectCommand.h DefineVarCommand.h DefineVarCommand.cpp ConnectCommand.cpp)
+add_executable(ex3 main.cpp Command.h OpenServerCommand.cpp OpenServerCommand.h ConnectCommand.h DefineVarCommand.h DefineVarCommand.cpp ConnectCommand.cpp Var.h Var.cpp PrintCommand.cpp PrintCommand.h)
