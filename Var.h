@@ -17,5 +17,6 @@ private:
 public:
     Var(string name, string sim, string inout);
     int getValue();
+    void setValue(int val);
 };
 #endif //EX3_VAR_H

@@ -9,6 +9,9 @@
 #include "ConnectCommand.h"
 #include "PrintCommand.h"
 #include "Var.h"
+#include "ConditionParser.h"
+#include "LoopCommand.h"
+#include "IfCommand.h"
 #include <map>
 
 int sizeAr = 0;
@@ -36,6 +39,8 @@ int main(int argsc, char *argv[]) {
             //throw "bad input";
         } else {
             Command *c = pos->second;
+            string check1 = array[index];
+            string check = array[index+1];
             index += c->execute(&array[index+1]);
         }
     }
@@ -46,11 +51,15 @@ void createMap(map<string, Command*> *pMap, map <string, Var*>* varTable) {
     ConnectCommand * connect = new ConnectCommand;
     DefineVarCommand *varCommand = new DefineVarCommand(varTable);
     PrintCommand *print = new PrintCommand(varTable);
-    //DefineVarCommand * var = new
+    //must be the last one we enter because it has a map of the commands too
+    ConditionParser *I = new IfCommand(varTable);
+    ConditionParser *L = new LoopCommand(pMap, varTable);
     pMap->insert(pair<string, Command*>("openDataServer", openCommand));
     pMap->insert(pair<string, Command*>("connectControlClient", connect));
     pMap->insert(pair<string, Command*>("var", varCommand));
     pMap->insert(pair<string, Command*>("Print", print));
+    pMap->insert(pair<string, Command*>("while", I));
+    pMap->insert(pair<string, Command*>("{", L));
 }
  string * lexer(char *argv[]) {
     deque<string> deque;
@@ -60,16 +69,14 @@ void createMap(map<string, Command*> *pMap, map <string, Var*>* varTable) {
         printf("can't open the file");
         exit(1);
     }
-    string megaString;
-    string line;
+    string megaString, line;
     ifstream myfile;
     myfile.open(argv[1]);
-    //entering the strings to a vector
     //reading the lines in the file
     while (getline(myfile, line)) {
         // creating an array of string from the attached string
         size_t prev = 0, pos;
-        while ((pos = line.find_first_of(" ,()\t", prev)) != std::string::npos) {
+        while ((pos = line.find_first_of(" ,(\t)", prev)) != std::string::npos) {
             if (pos > prev) {
                 string sub1 = line.substr(prev, pos - prev);
                 // entering to the deque
@@ -82,7 +89,9 @@ void createMap(map<string, Command*> *pMap, map <string, Var*>* varTable) {
             }
             prev = pos + 1;
         }
-        if ((pos = line.find_first_of("{}", prev)) != std::string::npos) {
+        // printing the {,} and the end of the line if it does'nt contain any of the checked chars
+        if (((line != "") && (line.find_first_of(" ,(\t)", prev)) == std::string::npos &&
+        (line.find_first_of("{}", prev)) != std::string::npos)) {
             deque.push_back(line);
             sizeDeque +=1;
             continue;

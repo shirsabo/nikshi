@@ -8,6 +8,7 @@
 #include "Command.h"
 #include "Var.h"
 #include <map>
+using namespace std;
 
 class DefineVarCommand: public Command {
 private:
@@ -15,5 +16,11 @@ private:
 public:
     DefineVarCommand(map <string, Var*>* varTable);
      int execute(string*);
+
+    bool checkForErrow(string *pString);
+
+    int checkForEqual(string *pString);
+
+    string* seperateString(string *pString);
 };
 #endif //EX3_DEFINEVARCOMMAND_H

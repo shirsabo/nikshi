@@ -12,9 +12,7 @@ using namespace std;
 class Command {
 
 public:
-     virtual int execute(string *) {
-         return 0;
-     };
+     virtual int execute(string *) = 0;
      ~Command() {}
 };
 #endif //EX3_COMMAND_H
