@@ -21,15 +21,25 @@ int DefineVarCommand::execute(string *s) {
         string *arr = seperateString(s);
         if (arr[1] != "") {
             // x=val
-            Var *newVar = new Var(arr[0], "", "");
-            newVar->setValue(stoi(arr[1]));
-            this->varTable->insert({arr[0], newVar});
+            auto pos = varTable->find(arr[0]);
+            if (pos == varTable->end()) {
+                Var *newVar = new Var(arr[0], "", "");
+                newVar->setValue(stod(arr[1]));
+                this->varTable->insert({arr[0], newVar});
+            } else {
+                pos->second->setValue(stod(arr[1]));
+            }
             return 2;
         } else {
             // x= val
-            Var *newVar = new Var(arr[0], "", "");
-            newVar->setValue(stoi(*(s + 1)));
-            this->varTable->insert({arr[0], newVar});
+            auto pos = varTable->find(arr[0]);
+            if (pos == varTable->end()) {
+                Var *newVar = new Var(arr[0], "", "");
+                newVar->setValue(stod(*(s + 1)));
+                this->varTable->insert({arr[0], newVar});
+            } else {
+                pos->second->setValue(stod(*(s + 1)));
+            }
             return 3;
         }
     } else if (checkForEqual(s) == 2) {
@@ -37,17 +47,28 @@ int DefineVarCommand::execute(string *s) {
         string next = *(s+1);
         if (*(s+1) == "=") {
             // x = val
-            Var *newVar = new Var(name, "", "");
-            newVar->setValue(stoi(*(s + 2)));
-            this->varTable->insert({name, newVar});
+            auto pos = varTable->find(*s);
+            if (pos == varTable->end()) {
+                Var *newVar = new Var(name, "", "");
+                string num = *(s + 2);
+                newVar->setValue(stod(*(s + 2)));
+                this->varTable->insert({name, newVar});
+            } else {
+                pos->second->setValue(stod(*(s + 2)));
+            }
             return 4;
         } else {
             // x =val
-            std::size_t index = (*(s+1)).find_first_of("=", 0);
-            string val = (*(s+1)).substr(index + 1, (*(s+1)).length());
-            Var *newVar = new Var(name, "", "");
-            newVar->setValue(stoi(val));
-            this->varTable->insert({name, newVar});
+            std::size_t index = (*(s + 1)).find_first_of("=", 0);
+            string val = (*(s + 1)).substr(index + 1, (*(s + 1)).length());
+            auto pos = varTable->find(*s);
+            if (pos == varTable->end()) {
+                Var *newVar = new Var(name, "", "");
+                newVar->setValue(stod(val));
+                this->varTable->insert({name, newVar});
+            } else {
+                pos->second->setValue(stod(val));
+            }
             return 3;
         }
     }
@@ -72,6 +93,7 @@ int DefineVarCommand::checkForEqual(string *s) {
 }
 
 string *DefineVarCommand::seperateString(string *s) {
+    string check = *s;
     string *arr = new string[2];
     std::size_t index = (*s).find_first_of("=", 0);
     string sub1 = (*s).substr(0, index);

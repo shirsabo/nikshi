@@ -9,14 +9,14 @@
 using namespace std;
 class Var {
 private:
-    int value = 0;
+    double value = 0;
     string sim = "";
     // tells us if we need to output or input the information
     string inout = "";
     string name = "";
 public:
     Var(string name, string sim, string inout);
-    int getValue();
-    void setValue(int val);
+    double getValue();
+    void setValue(double val);
 };
 #endif //EX3_VAR_H

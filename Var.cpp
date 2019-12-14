@@ -16,10 +16,10 @@ Var::Var(string nameIn, string simIn, string inoutIn) {
     this->sim = simIn;
 }
 
-int Var::getValue() {
+double Var::getValue() {
     return this->value;
 }
 
-void Var::setValue(int val) {
+void Var::setValue(double val) {
     this->value = val;
 }

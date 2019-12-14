@@ -8,11 +8,10 @@
 #include "Command.h"
 #include <map>
 class IfCommand: public ConditionParser {
-private:
-    map <string, Var*>* varTable;
 public:
-    IfCommand(map <string, Var*>* varTableIn);
+    IfCommand(map<string, Command *> *mapCommandIn, map <string, Var*>* varTableIn);
     int execute(string*) ;
+    ~IfCommand();
 };
 
 
