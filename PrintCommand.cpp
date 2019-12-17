@@ -7,7 +7,7 @@
 //
 using namespace std;
 
-PrintCommand::PrintCommand(map <string, Var*> * varTableIn) {
+PrintCommand::PrintCommand(unordered_map <string, Var*> * varTableIn) {
     this->varTable = varTableIn;
 }
 int PrintCommand::execute(std::__cxx11::string *print) {

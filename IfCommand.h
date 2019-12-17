@@ -6,10 +6,10 @@
 #define EX3_IFCOMMAND_H
 #include "ConditionParser.h"
 #include "Command.h"
-#include <map>
+#include <unordered_map>
 class IfCommand: public ConditionParser {
 public:
-    IfCommand(map<string, Command *> *mapCommandIn, map <string, Var*>* varTableIn);
+    IfCommand(unordered_map<string, Command *> *mapCommandIn, unordered_map <string, Var*>* varTableIn);
     int execute(string*) ;
     ~IfCommand();
 };

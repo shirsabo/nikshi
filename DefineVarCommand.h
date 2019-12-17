@@ -7,14 +7,15 @@
 
 #include "Command.h"
 #include "Var.h"
-#include <map>
+#include <unordered_map>
 using namespace std;
 
 class DefineVarCommand: public Command {
 private:
-    map <string, Var*>* varTable;
+    unordered_map <string, Var*>* varTable;
+    unordered_map<string, Var *> *server_map;
 public:
-    DefineVarCommand(map <string, Var*>* varTable);
+    DefineVarCommand(unordered_map <string, Var*>* varTable,  unordered_map<string, Var *> *server_map);
      int execute(string*);
 
     bool checkForErrow(string *pString);
@@ -24,5 +25,7 @@ public:
     string* seperateString(string *pString);
 
     bool checkIfNumber(string s);
+
+    Var *checkInServerMap(string *pString);
 };
 #endif //EX3_DEFINEVARCOMMAND_H

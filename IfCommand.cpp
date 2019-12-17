@@ -6,7 +6,7 @@
 #include "Command.h"
 #include "ConditionParser.h"
 
-IfCommand::IfCommand(map<string, Command *> *mapCommandIn, map<string, Var *> *varTableIn) {
+IfCommand::IfCommand(unordered_map<string, Command *> *mapCommandIn, unordered_map<string, Var *> *varTableIn) {
     this->commandMap = mapCommandIn;
     this->varTable = varTableIn;
 }

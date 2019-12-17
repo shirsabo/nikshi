@@ -7,13 +7,13 @@
 
 #include "Command.h"
 #include "Var.h"
-#include <map>
+#include <unordered_map>
 
 class PrintCommand: public Command {
 private:
-    map <string, Var*>* varTable;
+    unordered_map <string, Var*>* varTable;
 public:
-    PrintCommand(map <string, Var*>* varTable);
+    PrintCommand(unordered_map <string, Var*>* varTable);
     int execute(string* print);
 };
 

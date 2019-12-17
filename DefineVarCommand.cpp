@@ -7,13 +7,18 @@
 #include "ConditionParser.h"
 #include <stdlib.h>
 
-DefineVarCommand::DefineVarCommand(map<string, Var *> *varTableIn) {
+DefineVarCommand::DefineVarCommand(unordered_map<string, Var *> *varTableIn,  unordered_map<string, Var *> *server_mapIn) {
     this->varTable = varTableIn;
+    this->server_map = server_mapIn;
 }
 
 int DefineVarCommand::execute(string *s) {
     string check = *s;
     if (checkForErrow(s)) {
+        if (Var* var_server = checkInServerMap(s + 3)) {
+            // the var exists and we will point to it
+
+        }
         // there is an erros : ->/<-
         Var *newVar = new Var(*s, *(s + 3), *(s + 1));
         this->varTable->insert({*s, newVar});
@@ -135,4 +140,14 @@ bool DefineVarCommand::checkIfNumber(string s) {
         }
     }
     return true;
+}
+
+Var *DefineVarCommand::checkInServerMap(string *s) {
+    string check = *s;
+    auto pos = server_map->find(*s);
+    if (pos == server_map->end()) {
+        return nullptr;
+    } else {
+        return pos->second;
+    }
 }

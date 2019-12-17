@@ -8,15 +8,15 @@
 #include "Var.h"
 //#include "IfCommand.h"
 //#include "LoopCommand.h"
-#include <map>
+#include <unordered_map>
 #include <functional>
 
 class ConditionParser: public Command {
 public:
-    map<string, Command *> *commandMap;
-    map <string, Var*>* varTable;
+    unordered_map<string, Command *> *commandMap;
+    unordered_map <string, Var*>* varTable;
 
-    void parser(map<string, Command*>* mp, string *array, int size);
+    void parser(unordered_map<string, Command*>* mp, string *array, int size);
 
     virtual int execute(string* s) = 0;
 

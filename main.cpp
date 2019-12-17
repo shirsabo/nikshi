@@ -13,24 +13,27 @@
 #include "LoopCommand.h"
 #include "IfCommand.h"
 #include "SleepCommand.h"
-#include <map>
+#include <unordered_map>
 
 int sizeAr = 0;
 using namespace std;
 
 string *lexer(char *argv[]);
 
-void createMap(map<string, Command *> *pMap, map<string, Var *> *varTable);
+void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var *> *varTable,
+               unordered_map<string, Var *> *server_map);
 
-void parser(map<string, Command *> *mp, string *array, int size);
+void parser(unordered_map<string, Command *> *mp, string *array, int size);
 
 int main(int argsc, char *argv[]) {
     string *array = lexer(argv);
+    // creating map for the open server command
+    unordered_map<string, Var*> *server_map = new unordered_map<string, Var*>;
     // creating var table
-    map<string, Var *> *varTable = new map<string, Var *>;
+    unordered_map<string, Var *> *varTable = new unordered_map<string, Var*>;
     // creating a map of the commands
-    map<string, Command *> mp;
-    createMap(&mp, varTable);
+    unordered_map<string, Command *> mp;
+    createMap(&mp, varTable, server_map);
     for (int i = 0; i < sizeAr; ++i) {
         cout << array[i] << endl;
     }
@@ -38,7 +41,7 @@ int main(int argsc, char *argv[]) {
     return 0;
 }
 
-void parser(map<string, Command *> *mp, string *array, int size) {
+void parser(unordered_map<string, Command *> *mp, string *array, int size) {
     int index = 0;
     while (index < size) {
         auto pos = mp->find(array[index]);
@@ -53,10 +56,11 @@ void parser(map<string, Command *> *mp, string *array, int size) {
     }
 }
 
-void createMap(map<string, Command *> *pMap, map<string, Var *> *varTable) {
-    OpenServerCommand *openCommand = new OpenServerCommand(varTable);
+void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var *> *varTable,
+               unordered_map<string, Var *> *server_map) {
+    OpenServerCommand *openCommand = new OpenServerCommand(server_map);
     ConnectCommand *connect = new ConnectCommand;
-    DefineVarCommand *varCommand = new DefineVarCommand(varTable);
+    DefineVarCommand *varCommand = new DefineVarCommand(varTable, server_map);
     PrintCommand *print = new PrintCommand(varTable);
     SleepCommand *sleep = new SleepCommand();
     //must be the last one we enter because it has a map of the commands too

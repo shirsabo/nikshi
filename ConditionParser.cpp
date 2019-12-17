@@ -7,7 +7,7 @@ ConditionParser::~ConditionParser() {
 
 }
 
-void ConditionParser::parser(map<string, Command *> *mp, string *array, int size) {
+void ConditionParser::parser(unordered_map<string, Command *> *mp, string *array, int size) {
     int index = 0;
     while (index < size) {
         auto pos = mp->find(array[index]);
