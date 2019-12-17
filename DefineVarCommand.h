@@ -22,5 +22,7 @@ public:
     int checkForEqual(string *pString);
 
     string* seperateString(string *pString);
+
+    bool checkIfNumber(string s);
 };
 #endif //EX3_DEFINEVARCOMMAND_H

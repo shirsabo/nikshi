@@ -54,7 +54,7 @@ void parser(map<string, Command *> *mp, string *array, int size) {
 }
 
 void createMap(map<string, Command *> *pMap, map<string, Var *> *varTable) {
-    OpenServerCommand *openCommand = new OpenServerCommand;
+    OpenServerCommand *openCommand = new OpenServerCommand(varTable);
     ConnectCommand *connect = new ConnectCommand;
     DefineVarCommand *varCommand = new DefineVarCommand(varTable);
     PrintCommand *print = new PrintCommand(varTable);

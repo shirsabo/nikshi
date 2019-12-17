@@ -24,7 +24,7 @@ public:
 
     bool checkCondition(string *original);
 
-    bool isNumber(string s);
+    static bool isNumber(string s);
 
     int executeHelper(string *s);
 };

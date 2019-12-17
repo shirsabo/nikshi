@@ -4,6 +4,7 @@
 #include "DefineVarCommand.h"
 #include "Command.h"
 #include <string>
+#include "ConditionParser.h"
 #include <stdlib.h>
 
 DefineVarCommand::DefineVarCommand(map<string, Var *> *varTableIn) {
@@ -46,6 +47,15 @@ int DefineVarCommand::execute(string *s) {
         string name = *s;
         string next = *(s+1);
         if (*(s+1) == "=") {
+            if (!checkIfNumber(*(s+2))) {
+                // it's a var and we need to the get it's value
+                auto pos = varTable->find(*(s+2));
+                if (pos == varTable->end()) {
+
+                } else {
+                    *(s + 2)=  std::to_string(pos->second->getValue());
+                }
+            }
             // x = val
             auto pos = varTable->find(*s);
             if (pos == varTable->end()) {
@@ -105,4 +115,24 @@ string *DefineVarCommand::seperateString(string *s) {
         arr[1] = "";
     }
     return arr;
+}
+
+bool DefineVarCommand::checkIfNumber(string s) {
+    for (unsigned int i = 0; i < s.length(); i++) {
+        if ((i == 0) && (isdigit(s[i]))) {
+            continue;
+        } else if ((i == 0) && (s[i] == '-')) {
+            if ((isdigit(s[1]))) {
+                continue;
+            } else {
+                return false;
+            }
+        } else if (i == 0) {
+            return false;
+        }
+        if (isdigit(s[i]) == 0 && s[i] != '.' && s[i] != '-') {
+            return false;
+        }
+    }
+    return true;
 }
