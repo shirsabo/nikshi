@@ -15,15 +15,18 @@ DefineVarCommand::DefineVarCommand(unordered_map<string, Var *> *varTableIn,  un
 int DefineVarCommand::execute(string *s) {
     string check = *s;
     if (checkForErrow(s)) {
+        // there are -> / <-
         if (Var* var_server = checkInServerMap(s + 3)) {
-            // the var exists and we will point to it
-
+            // the var exists in the server's map and we will point to it
+            this->varTable->insert({*s, var_server});
+        } else {
+            // there is an errow : ->/<-
+            Var *newVar = new Var(*s, *(s + 3), *(s + 1));
+            this->varTable->insert({*s, newVar});
         }
-        // there is an erros : ->/<-
-        Var *newVar = new Var(*s, *(s + 3), *(s + 1));
-        this->varTable->insert({*s, newVar});
         return 5;
     } else if (checkForEqual(s) == 1) {
+        // there is a '=' sign
         string *arr = seperateString(s);
         if (arr[1] != "") {
             // x=val
@@ -56,7 +59,8 @@ int DefineVarCommand::execute(string *s) {
                 // it's a var and we need to the get it's value
                 auto pos = varTable->find(*(s+2));
                 if (pos == varTable->end()) {
-
+                    // not a var or a number - error
+                    /*** error ***/
                 } else {
                     *(s + 2)=  std::to_string(pos->second->getValue());
                 }

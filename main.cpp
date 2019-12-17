@@ -47,6 +47,7 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size) {
         auto pos = mp->find(array[index]);
         if (pos == mp->end()) {
             // check if it's assignment line (rpm = 0)
+            /*** error ***/
         } else {
             Command *c = pos->second;
             string check1 = array[index];

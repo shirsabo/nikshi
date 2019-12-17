@@ -64,47 +64,54 @@ OpenServerCommand::OpenServerCommand(std::unordered_map<string, Var *> *pMap) {
 }
 
 void OpenServerCommand::updateMap(char *buffer) {
+    cout << buffer[0] <<endl;
+    cout << buffer[1] <<endl;
+    cout << buffer[2]<<endl;
+    cout << buffer[3]<<endl;
+    cout << buffer[4]<<endl;
+    cout << buffer[5]<<endl;
+
     // speed
     Var *newVar1 = new Var("airspeed-indicator_indicated-speed-kt",
-            "/instrumentation/airspeed-indicator/indicated-speed-kt", "");
+            "/instrumentation/airspeed-indicator/indicated-speed-kt", "<-");
     newVar1->setValue(buffer[0]);
-    this->varTable->insert({"/instrumentation/airspeed-indicator/indicated-speed-kt", newVar1});
+    this->varTable->insert({"\"/instrumentation/airspeed-indicator/indicated-speed-kt\"", newVar1});
 
     // altimeter
     Var *newVar2 = new Var("altimeter_indicated-altitude-ft",
-                          "/instrumentation/altimeter/indicated-altitude-ft", "");
+                          "/instrumentation/altimeter/indicated-altitude-ft", "<-");
     newVar2->setValue(buffer[1]);
-    this->varTable->insert({"/instrumentation/altimeter/indicated-altitude-ft", newVar2});
+    this->varTable->insert({"\"/instrumentation/altimeter/indicated-altitude-ft\"", newVar2});
 
     // altimeter
     Var *newVar3 = new Var("altimeter_pressure-alt-ft",
-                           "/instrumentation/altimeter/pressure-alt-ft", "");
+                           "/instrumentation/altimeter/pressure-alt-ft", "<-");
     newVar3->setValue(buffer[2]);
-    this->varTable->insert({"/instrumentation/altimeter/pressure-alt-ft", newVar3});
+    this->varTable->insert({"\"/instrumentation/altimeter/pressure-alt-ft\"", newVar3});
 
     // attitude
     Var *newVar4 = new Var("attitude-indicator_indicated-pitch-deg",
-                           "/instrumentation/attitude-indicator/indicated-pitch-deg", "");
+                           "/instrumentation/attitude-indicator/indicated-pitch-deg", "<-");
     newVar4->setValue(buffer[3]);
-    this->varTable->insert({"/instrumentation/attitude-indicator/indicated-pitch-deg", newVar4});
+    this->varTable->insert({"\"/instrumentation/attitude-indicator/indicated-pitch-deg\"", newVar4});
 
-    // altimeter
+    //
     Var *newVar5 = new Var("attitude-indicator_indicated-roll-deg",
-                           "/instrumentation/attitude-indicator/indicated-roll-deg", "");
-    newVar2->setValue(buffer[4]);
-    this->varTable->insert({"/instrumentation/attitude-indicator/indicated-roll-deg", newVar5});
+                           "/instrumentation/attitude-indicator/indicated-roll-deg", "<-");
+    newVar5->setValue(buffer[4]);
+    this->varTable->insert({"\"/instrumentation/attitude-indicator/indicated-roll-deg\"", newVar5});
 
     //
     Var *newVar6 = new Var("attitude-indicator_internal-pitch-deg",
-                           "/instrumentation/attitude-indicator/internal-pitch-deg", "");
-    newVar2->setValue(buffer[5]);
-    this->varTable->insert({"/instrumentation/attitude-indicator/internal-pitch-deg", newVar6});
+                           "/instrumentation/attitude-indicator/internal-pitch-deg", "<-");
+    newVar6->setValue(buffer[5]);
+    this->varTable->insert({"\"/instrumentation/attitude-indicator/internal-pitch-deg\"", newVar6});
 
     //
     Var *newVar7 = new Var("attitude-indicator_internal-roll-deg",
-                           "/instrumentation/attitude-indicator/internal-roll-deg", "");
-    newVar2->setValue(buffer[6]);
-    this->varTable->insert({"/instrumentation/attitude-indicator/internal-roll-deg", newVar7});
+                           "/instrumentation/attitude-indicator/internal-roll-deg", "<-");
+    newVar7->setValue(buffer[6]);
+    this->varTable->insert({"\"/instrumentation/attitude-indicator/internal-roll-deg\"", newVar7});
 /**
     //
     Var *newVar2 = new Var("altimeter_indicated-altitude-ft",
