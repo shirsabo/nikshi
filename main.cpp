@@ -14,6 +14,8 @@
 #include "IfCommand.h"
 #include "SleepCommand.h"
 #include <unordered_map>
+#include <thread>
+#include <pthread.h>
 
 int sizeAr = 0;
 using namespace std;
@@ -26,6 +28,7 @@ void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var
 void parser(unordered_map<string, Command *> *mp, string *array, int size);
 
 int main(int argsc, char *argv[]) {
+
     string *array = lexer(argv);
     // creating map for the open server command
     unordered_map<string, Var*> *server_map = new unordered_map<string, Var*>;
@@ -52,6 +55,9 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size) {
             Command *c = pos->second;
             string check1 = array[index];
             string check = array[index + 1];
+            if(index == 0){
+                std::thread th(&OpenServerCommand::dataEntryPoint,(OpenServerCommand*)c, & (array[index + 1]));
+            }
             index += c->execute(&array[index + 1]);
         }
     }

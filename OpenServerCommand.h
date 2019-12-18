@@ -22,11 +22,11 @@ public:
 
     void updateMap(char buffer[1024], bool firstTime);
 
-    deque<string> createDeque(string buffer);
-
     void firstRead(string sub, int i);
 
     void notFirstRead(string s, int i);
+
+    int dataEntryPoint(string *s);
 };
 
 #endif //EX3_OPENSERVERCOMMAND_H
