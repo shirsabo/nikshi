@@ -26,8 +26,6 @@ public:
 
     void firstRead(string sub, int i);
 
-    //ssize_t read(string s, int i);
-
     void notFirstRead(string s, int i);
 };
 

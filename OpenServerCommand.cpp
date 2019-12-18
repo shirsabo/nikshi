@@ -48,14 +48,16 @@ int OpenServerCommand::execute(string *s) {
     close(socketfd); //closing the listening socket
     //reading from client
     char buffer[1024] = {0};
-    // updating the var table according to the buffer
-    updateMap(buffer, true);
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 2; i++) {
         int valread = ::read(client_socket, buffer, 1024);
         // updating the var table according to the buffer
         // change the value
-        updateMap(buffer, false);
+        if (i == 0) {
+            updateMap(buffer, true);
+        } else {
+            updateMap(buffer, false);
+        }
     }
     //writing back to client
     char *hello = "Hello, I can hear you! \n";
@@ -75,9 +77,11 @@ void OpenServerCommand::updateMap(char buffer[1024], bool firstTime) {
     for (; (pos = s.find_first_of(",", prev)) != std::string::npos; i += 1) {
         if (pos > prev) {
             string sub = s.substr(prev, pos - prev);
-            if (firstTime) {
+            if (firstTime == true) {
+                // creating the server map by creating new vars
                 firstRead(sub, i);
             } else {
+                // updating the server map by the new values
                 notFirstRead(sub, i);
             }
             string sub2 = s.substr(pos - prev + 1, s.length());
@@ -132,11 +136,6 @@ void OpenServerCommand::updateMap(char buffer[1024], bool firstTime) {
     **/
 }
 
-ssize_t read(string s, int i) {
-    return 0;
-}
-
-
 void OpenServerCommand::firstRead(string sub, int i) {
     if (i == 1) {
         // speed
@@ -184,6 +183,31 @@ void OpenServerCommand::firstRead(string sub, int i) {
 
 }
 
-void OpenServerCommand::notFirstRead(string s, int i) {
+void OpenServerCommand::notFirstRead(string sub, int i) {
+    string sim;
+    if (i == 1) {
+        sim = "\"/instrumentation/airspeed-indicator/indicated-speed-kt\"";
+    } else if (i == 2) {
+        sim = "\"/instrumentation/altimeter/indicated-altitude-ft\"";
+    } else if (i == 3) {
+        sim = "\"/instrumentation/altimeter/indicated-altitude-ft\"";
+    } else if (i == 4) {
+        sim = "\"/instrumentation/attitude-indicator/indicated-pitch-deg\"";
+    } else if (i == 5) {
+        sim = "\"/instrumentation/attitude-indicator/indicated-roll-deg\"";
+    } else if (i == 6) {
+        sim = "\"/instrumentation/attitude-indicator/internal-pitch-deg\"";
+    } else if (i == 7) {
+        sim = "\"/instrumentation/attitude-indicator/internal-roll-deg\"";
+    }
+
+    // finding the var from the server map
+    auto pos = this->varTable->find(sim);
+    if (pos == this->varTable->end()) {
+        // check if it's assignment line (rpm = 0)
+        /*** error ***/
+    } else {
+        pos->second->setValue(stof(sub));
+    }
 
 }
