@@ -56,7 +56,9 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size) {
             string check1 = array[index];
             string check = array[index + 1];
             if(index == 0){
-                std::thread th(&OpenServerCommand::dataEntryPoint,(OpenServerCommand*)c, & (array[index + 1]));
+                OpenServerCommand c1 = *((OpenServerCommand*)c);
+                std::thread th(&OpenServerCommand::dataEntryPoint, ref((c1)), & (array[index + 1]));
+                th.join();
             }
             index += c->execute(&array[index + 1]);
         }
