@@ -23,8 +23,7 @@ int OpenServerCommand::execute(string *s) {
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY; //give me any IP allocated for my machine
     address.sin_port = htons(stoi(*s));
-    //we need to convert our number
-    // to a number that the network understands.
+    //we need to convert our number to a number that the network understands.
     //the actual bind command
     if (bind(socketfd, (struct sockaddr *) &address, sizeof(address)) == -1) {
         std::cerr << "Could not bind the socket to an IP" << std::endl;
