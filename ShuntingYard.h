@@ -11,7 +11,9 @@
 #include <stack>
 #include <queue>
 #include "Expression.h"
+#include "Var.h"
 #include <map>
+#include <unordered_map>
 
 //
 // Created by nikol on 04/11/2019.
@@ -135,6 +137,7 @@ private:
     queue <char> outputOueue;
 public:
     void setVariables(string s);
+    void setVariables(std::unordered_map<string, Var *> *varTable);
     Expression* interpret(string s);
     void readAndAllocate(string s);
     int checkIfOperator(char sub);

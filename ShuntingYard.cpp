@@ -3,10 +3,15 @@
 //
 
 #include "ShuntingYard.h"
+#include "Var.h"
 #include <algorithm>
 #include <stdlib.h>
 #include <iostream>
 #include <map>
+#include<iterator>
+#include "Command.h"
+#include <unordered_map>
+
 
 //double Expression::calculate() {}
 
@@ -147,7 +152,12 @@ Div::~Div() {
     delete this->getLeft();
     delete this->getRight();
 }
-
+void Interpreter::setVariables(unordered_map<string, Var *> *varTable) {
+// Get an iterator pointing to begining of map
+    for (auto it =  varTable->begin(); it != varTable->end(); it ++) {
+        map1.insert({it->second->getName(),it->second->getValue()});
+    }
+}
 
 void Interpreter::setVariables(string s) {
     int n = std::count(s.begin(), s.end(), ';');

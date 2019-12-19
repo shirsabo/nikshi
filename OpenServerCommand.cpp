@@ -218,6 +218,7 @@ int OpenServerCommand:: acceptence(string *s){
     clientSetter(client_socket);
     close(socketfd); //closing the listening socket
 }
+
 void OpenServerCommand::clientSetter(int socket){
 this->client_socket = socket;
 }

@@ -15,6 +15,7 @@
 #include "SleepCommand.h"
 #include <unordered_map>
 #include <thread>
+#include "ShuntingYard.h"
 
 int sizeAr = 0;
 using namespace std;
@@ -35,6 +36,14 @@ int main(int argsc, char *argv[]) {
     unordered_map<string, Var *> *server_map = new unordered_map<string, Var *>;
     // creating var table
     unordered_map<string, Var *> *varTable = new unordered_map<string, Var *>;
+    /*
+    Var *va = new Var("s", "","");
+    va->setValue(5);
+    varTable->insert({"s", va});
+    Interpreter* interpret = new Interpreter();
+    interpret->setVariables(varTable);
+     */
+
     // creating a map of the commands
     unordered_map<string, Command *> mp;
     createMap(&mp, varTable, server_map, offWhileServer);
@@ -42,9 +51,6 @@ int main(int argsc, char *argv[]) {
         cout << array[i] << endl;
     }
     parser(&mp, array, sizeAr, offWhileServer);
-    if (true) {
-        cout<< "2";
-    }
     return 0;
 }
 
@@ -57,7 +63,6 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
         // check if it's assignment line (rpm = 0)
         /*** error ***/
     }
-
     Command *c = pos->second;
     OpenServerCommand c1 = *((OpenServerCommand *) c);
     // waiting for the server to accept the call
@@ -81,7 +86,7 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
     }
     // ending the loop in the open server command
     *offWhileServer = 1;
-    t1.join();
+    t2.join();
 }
 
 void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var *> *varTable,
@@ -94,6 +99,7 @@ void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var
     //must be the last one we enter because it has a map of the commands too
     ConditionParser *I = new IfCommand(pMap, varTable);
     ConditionParser *L = new LoopCommand(pMap, varTable);
+
     pMap->insert(pair<string, Command *>("openDataServer", openCommand));
     pMap->insert(pair<string, Command *>("connectControlClient", connect));
     pMap->insert(pair<string, Command *>("var", varCommand));
@@ -101,6 +107,10 @@ void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var
     pMap->insert(pair<string, Command *>("Sleep", sleep));
     pMap->insert(pair<string, Command *>("while", L));
     pMap->insert(pair<string, Command *>("if", I));
+    pMap->insert(pair<string, Command *>("print", print));
+    pMap->insert(pair<string, Command *>("sleep", sleep));
+    pMap->insert(pair<string, Command *>("While", L));
+    pMap->insert(pair<string, Command *>("If", I));
 }
 
 string *lexer(char *argv[]) {
@@ -118,9 +128,19 @@ string *lexer(char *argv[]) {
     while (getline(myfile, line)) {
         // creating an array of string from the attached string
         size_t prev = 0, pos;
-        while ((pos = line.find_first_of(" ,(\t)", prev)) != std::string::npos) {
+        while ((pos = line.find_first_of(" ,(\t)=", prev)) != std::string::npos) {
             if (pos > prev) {
                 string sub1 = line.substr(prev, pos - prev);
+                if (sub1.compare("While") || sub1.compare("while")) {
+
+                }
+                if (line[pos] == '=') {
+                    deque.push_back(sub1);
+                    string sub2 = line.substr(pos - prev + 1, line.length());
+                    deque.push_back(sub2);
+                    sizeDeque += 2;
+                    continue;
+                }
                 // entering to the deque
                 deque.push_back(sub1);
                 sizeDeque += 1;
@@ -158,3 +178,4 @@ string *lexer(char *argv[]) {
     }
     return (array);
 }
+

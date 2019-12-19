@@ -16,7 +16,8 @@ private:
     string name = "";
 public:
     Var(string name, string sim, string inout);
-    double getValue();
-    void setValue(double val);
+    string getName();
+    float getValue();
+    void setValue(float val);
 };
 #endif //EX3_VAR_H
