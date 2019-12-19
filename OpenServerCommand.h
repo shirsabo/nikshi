@@ -24,12 +24,14 @@ public:
 
     void updateMap(char buffer[1024], bool firstTime);
 
-    void firstRead(string sub, int i);
+    string initializeVars(string sub, int i, bool firstTime);
 
-    void notFirstRead(string s, int i);
+    void notFirstRead(string sub, int i);
 
     int dataEntryPoint(string *s);
+
     int acceptence(string *s);
+
     void clientSetter(int socket);
 };
 

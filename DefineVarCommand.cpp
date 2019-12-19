@@ -43,7 +43,7 @@ int DefineVarCommand::execute(string *s) {
             auto pos = varTable->find(arr[0]);
             if (pos == varTable->end()) {
                 Var *newVar = new Var(arr[0], "", "");
-                newVar->setValue(stod(*(s + 1)));
+                newVar->setValue(stof(*(s + 1)));
                 this->varTable->insert({arr[0], newVar});
             } else {
                 pos->second->setValue(stod(*(s + 1)));
@@ -69,7 +69,7 @@ int DefineVarCommand::execute(string *s) {
             if (pos == varTable->end()) {
                 Var *newVar = new Var(name, "", "");
                 string num = *(s + 2);
-                newVar->setValue(stod(*(s + 2)));
+                newVar->setValue(stof(*(s + 2)));
                 this->varTable->insert({name, newVar});
             } else {
                 pos->second->setValue(stod(*(s + 2)));

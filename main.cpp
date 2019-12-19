@@ -68,10 +68,11 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
     // waiting for the server to accept the call
     thread t1(&OpenServerCommand::acceptence, ref((c1)), &(array[index + 1]));
     t1.join();
+
     // strting to get information from the server
     thread t2(&OpenServerCommand::dataEntryPoint, ref((c1)), &(array[index + 1]));
-
     while (index < size) {
+        cout << "reading from the file"<<endl;
         auto pos = mp->find(array[index]);
         if (pos == mp->end()) {
             // check if it's assignment line (rpm = 0)
@@ -148,7 +149,7 @@ string *lexer(char *argv[]) {
                 deque.push_back("=");
                 string sub2 = line.substr(pos - prev + 1, line.length());
                 deque.push_back(sub2);
-                sizeDeque += 3;
+                sizeDeque += 2;
                 prev = 0;
                 break;
             }

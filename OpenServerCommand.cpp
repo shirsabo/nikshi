@@ -22,140 +22,20 @@ OpenServerCommand::OpenServerCommand(std::unordered_map<string, Var *> *pMap, in
     this->offWhileServer = offWhileServerIn;
 }
 
-/**
-    //
-    Var *newVar2 = new Var("altimeter_indicated-altitude-ft",
-                           "/instrumentation/altimeter/indicated-altitude-ft", "");
-    newVar2->setValue(buffer[0]);
-    this->varTable->insert({"altimeter_indicated-altitude-ft", newVar2});// altimeter
-    Var *newVar2 = new Var("altimeter_indicated-altitude-ft",
-                           "/instrumentation/altimeter/indicated-altitude-ft", "");
-    newVar2->setValue(buffer[0]);
-    this->varTable->insert({"altimeter_indicated-altitude-ft", newVar2});// altimeter
-    Var *newVar2 = new Var("altimeter_indicated-altitude-ft",
-                           "/instrumentation/altimeter/indicated-altitude-ft", "");
-    newVar2->setValue(buffer[0]);
-    this->varTable->insert({"altimeter_indicated-altitude-ft", newVar2});// altimeter
-    Var *newVar2 = new Var("altimeter_indicated-altitude-ft",
-                           "/instrumentation/altimeter/indicated-altitude-ft", "");
-    newVar2->setValue(buffer[0]);
-    this->varTable->insert({"altimeter_indicated-altitude-ft", newVar2});// altimeter
-    Var *newVar2 = new Var("altimeter_indicated-altitude-ft",
-                           "/instrumentation/altimeter/indicated-altitude-ft", "");
-    newVar2->setValue(buffer[0]);
-    this->varTable->insert({"altimeter_indicated-altitude-ft", newVar2});// altimeter
-    Var *newVar2 = new Var("altimeter_indicated-altitude-ft",
-                           "/instrumentation/altimeter/indicated-altitude-ft", "");
-    newVar2->setValue(buffer[0]);
-    this->varTable->insert({"altimeter_indicated-altitude-ft", newVar2});// altimeter
-    Var *newVar2 = new Var("altimeter_indicated-altitude-ft",
-                           "/instrumentation/altimeter/indicated-altitude-ft", "");
-    newVar2->setValue(buffer[0]);
-    this->varTable->insert({"altimeter_indicated-altitude-ft", newVar2});// altimeter
-    Var *newVar2 = new Var("altimeter_indicated-altitude-ft",
-                           "/instrumentation/altimeter/indicated-altitude-ft", "");
-    newVar2->setValue(buffer[0]);
-    this->varTable->insert({"altimeter_indicated-altitude-ft", newVar2});// altimeter
-    Var *newVar2 = new Var("altimeter_indicated-altitude-ft",
-                           "/instrumentation/altimeter/indicated-altitude-ft", "");
-    newVar2->setValue(buffer[0]);
-    this->varTable->insert({"altimeter_indicated-altitude-ft", newVar2});// altimeter
-    Var *newVar2 = new Var("altimeter_indicated-altitude-ft",
-                           "/instrumentation/altimeter/indicated-altitude-ft", "");
-    newVar2->setValue(buffer[0]);
-    this->varTable->insert({"altimeter_indicated-altitude-ft", newVar2});
-    **/
-
-void OpenServerCommand::firstRead(string sub, int i) {
-    if (i == 1) {
-        // speed
-        Var *newVar1 = new Var("airspeed-indicator_indicated-speed-kt",
-                               "/instrumentation/airspeed-indicator/indicated-speed-kt", "<-");
-        newVar1->setValue(stof(sub));
-        this->varTable->insert({"\"/instrumentation/airspeed-indicator/indicated-speed-kt\"", newVar1});
-    } else if (i == 2) {
-        // altimeter
-        Var *newVar2 = new Var("altimeter_indicated-altitude-ft",
-                               "/instrumentation/altimeter/indicated-altitude-ft", "<-");
-        newVar2->setValue(stof(sub));
-        this->varTable->insert({"\"/instrumentation/altimeter/indicated-altitude-ft\"", newVar2});
-    } else if (i == 3) {
-        // altimeter
-        Var *newVar3 = new Var("altimeter_pressure-alt-ft",
-                               "/instrumentation/altimeter/pressure-alt-ft", "<-");
-        newVar3->setValue(stof(sub));
-        this->varTable->insert({"\"/instrumentation/altimeter/pressure-alt-ft\"", newVar3});
-    } else if (i == 4) {
-        // attitude
-        Var *newVar4 = new Var("attitude-indicator_indicated-pitch-deg",
-                               "/instrumentation/attitude-indicator/indicated-pitch-deg", "<-");
-        newVar4->setValue(stof(sub));
-        this->varTable->insert({"\"/instrumentation/attitude-indicator/indicated-pitch-deg\"", newVar4});
-    } else if (i == 5) {
-        //
-        Var *newVar5 = new Var("attitude-indicator_indicated-roll-deg",
-                               "/instrumentation/attitude-indicator/indicated-roll-deg", "<-");
-        newVar5->setValue(stof(sub));
-        this->varTable->insert({"\"/instrumentation/attitude-indicator/indicated-roll-deg\"", newVar5});
-    } else if (i == 6) {
-        //
-        Var *newVar6 = new Var("attitude-indicator_internal-pitch-deg",
-                               "/instrumentation/attitude-indicator/internal-pitch-deg", "<-");
-        newVar6->setValue(stof(sub));
-        this->varTable->insert({"\"/instrumentation/attitude-indicator/internal-pitch-deg\"", newVar6});
-    } else if (i == 7) {
-        //
-        Var *newVar7 = new Var("attitude-indicator_internal-roll-deg",
-                               "/instrumentation/attitude-indicator/internal-roll-deg", "<-");
-        newVar7->setValue(stof(sub));
-        this->varTable->insert({"\"/instrumentation/attitude-indicator/internal-roll-deg\"", newVar7});
-    }
-
-}
-
-void OpenServerCommand::notFirstRead(string sub, int i) {
-    string sim;
-    if (i == 1) {
-        sim = "\"/instrumentation/airspeed-indicator/indicated-speed-kt\"";
-    } else if (i == 2) {
-        sim = "\"/instrumentation/altimeter/indicated-altitude-ft\"";
-    } else if (i == 3) {
-        sim = "\"/instrumentation/altimeter/indicated-altitude-ft\"";
-    } else if (i == 4) {
-        sim = "\"/instrumentation/attitude-indicator/indicated-pitch-deg\"";
-    } else if (i == 5) {
-        sim = "\"/instrumentation/attitude-indicator/indicated-roll-deg\"";
-    } else if (i == 6) {
-        sim = "\"/instrumentation/attitude-indicator/internal-pitch-deg\"";
-    } else if (i == 7) {
-        sim = "\"/instrumentation/attitude-indicator/internal-roll-deg\"";
-    }
-
-    // finding the var from the server map
-    auto pos = this->varTable->find(sim);
-    if (pos == this->varTable->end()) {
-        // check if it's assignment line (rpm = 0)
-        /*** error ***/
-    } else {
-        pos->second->setValue(stof(sub));
-    }
-
-}
-
 int OpenServerCommand::dataEntryPoint(string *s) {
     //reading from client
     char buffer[1024] = {0};
     int i = 0;
-   while(!*offWhileServer){
+    while (!*offWhileServer) {
         int valread = ::read(client_socket, buffer, 1024);
         cout << buffer << endl;
         // updating the var table according to the buffer
         // change the value
         if (i == 0) {
-            cout <<"first time"<<endl;
+            cout << "first time" << endl;
             updateMap(buffer, true);
         } else {
-            cout <<"second time"<<endl;
+            cout << "second time" << endl;
             updateMap(buffer, false);
         }
         i++;
@@ -172,7 +52,7 @@ void OpenServerCommand::updateMap(char buffer[1024], bool firstTime) {
             string sub = s.substr(prev, pos - prev);
             if (firstTime) {
                 // creating the server map by creating new vars
-                firstRead(sub, i);
+                string s = initializeVars(sub, i, true);
             } else {
                 // updating the server map by the new values
                 notFirstRead(sub, i);
@@ -185,11 +65,12 @@ void OpenServerCommand::updateMap(char buffer[1024], bool firstTime) {
         prev = pos + 1;
     }
 }
-int OpenServerCommand:: acceptence(string *s){
+
+int OpenServerCommand::acceptence(string *s) {
     int socketfd = socket(AF_INET, SOCK_STREAM, 0);
     if (socketfd == -1) {
         //error
-       throw"Bad connedction";
+        throw "Bad connedction";
     }
     //bind socket to IP address
     // we first need to create the sockaddr obj.
@@ -200,11 +81,11 @@ int OpenServerCommand:: acceptence(string *s){
     //we need to convert our number to a number that the network understands.
     //the actual bind command
     if (bind(socketfd, (struct sockaddr *) &address, sizeof(address)) == -1) {
-        throw"Bad connedction\n";
+        throw "Bad connedction\n";
     }
     //making socket listen to the port
     if (listen(socketfd, 5) == -1) { //can also set to SOMAXCON (max connections)
-        throw"Bad connedction\n";
+        throw "Bad connedction\n";
     } else {
         std::cout << "Server is now listening ..." << std::endl;
     }
@@ -213,13 +94,323 @@ int OpenServerCommand:: acceptence(string *s){
     int client_socket = accept(socketfd, (struct sockaddr *) &address,
                                (socklen_t *) &address);
     if (client_socket == -1) {
-        throw"Bad connedction\n";
+        throw "Bad connedction\n";
     }
     clientSetter(client_socket);
     close(socketfd); //closing the listening socket
 }
 
-void OpenServerCommand::clientSetter(int socket){
-this->client_socket = socket;
+void OpenServerCommand::clientSetter(int socket) {
+    this->client_socket = socket;
 }
 
+string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
+    Var *varTemp;
+    switch (i) {
+        case 1://
+            if (firstTime) {
+                cout << "first assign openServerCommand" << endl;
+                varTemp = new Var("airspeed-indicator_indicated-speed-kt",
+                                  "/instrumentation/airspeed-indicator/indicated-speed-kt", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/airspeed-indicator/indicated-speed-kt\"", varTemp});
+            }
+            return "\"/instrumentation/airspeed-indicator/indicated-speed-kt\"";
+        case 2:
+            //
+            if (firstTime) {
+                varTemp = new Var("altimeter_indicated-altitude-ft",
+                                  "/instrumentation/altimeter/indicated-altitude-ft", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/altimeter/indicated-altitude-ft\"", varTemp});
+            }
+            return "\"/instrumentation/altimeter/indicated-altitude-ft\"";
+        case 3:
+            //
+            if (firstTime) {
+                varTemp = new Var("altimeter_pressure-alt-ft",
+                                  "/instrumentation/altimeter/pressure-alt-ft", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"//instrumentation/altimeter/pressure-alt-ft\"", varTemp});
+            }
+            return "\"//instrumentation/altimeter/pressure-alt-ft\"";
+        case 4:
+            if (firstTime) {
+                varTemp = new Var("attitude-indicator_indicated-roll-deg",
+                                  "/instrumentation/attitude-indicator/indicated-roll-deg", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/attitude-indicator/indicated-roll-deg\"", varTemp});
+            }
+            return "\"/instrumentation/attitude-indicator/indicated-roll-deg\"";
+        case 5:
+            if (firstTime) {
+                varTemp = new Var("encoder_pressure-alt-ft",
+                                  "/instrumentation/encoder/pressure-alt-ft", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/encoder/pressure-alt-ft\"", varTemp});
+            }
+            return "\"/instrumentation/encoder/pressure-alt-ft\"";
+        case 6:
+            if (firstTime) {
+                varTemp = new Var("attitude-indicator_internal-roll-deg",
+                                  "/instrumentation/attitude-indicator/internal-roll-deg", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/attitude-indicator/internal-roll-deg\"", varTemp});
+            }
+            return "\"/instrumentation/attitude-indicator/internal-roll-deg\"";
+        case 7://
+            if (firstTime) {
+                varTemp = new Var("time_warp",
+                                  "/sim/time/warp", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/sim/time/warp\"", varTemp});
+            }
+            return "\"/sim/time/warp\"";
+        case 8://
+            if (firstTime) {
+                varTemp = new Var("switches_magnetos",
+                                  "/controls/switches/magnetos", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/controls/switches/magnetos\"", varTemp});
+            }
+            return "\"/controls/switches/magnetos\"";
+        case 9:
+            if (firstTime) {
+                varTemp = new Var("heading-indicator_offset-deg",
+                                  "/instrumentation/heading-indicator/offset-deg", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/heading-indicator/offset-deg\"", varTemp});
+            }
+            return "\"/instrumentation/heading-indicator/offset-deg\"";
+        case 10:
+            if (firstTime) {
+                varTemp = new Var("encoder_indicated-altitude-ft",
+                                  "/instrumentation/encoder/indicated-altitude-ft", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/encoder/indicated-altitude-ft\"", varTemp});
+            }
+            return "\"/instrumentation/encoder/indicated-altitude-ft\"";
+        case 11:
+            if (firstTime) {
+                varTemp = new Var("gps_indicated-altitude-ft",
+                                  "/instrumentation/gps/indicated-altitude-ft", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/gps/indicated-altitude-ft\"", varTemp});
+            }
+            return "\"/instrumentation/gps/indicated-altitude-ft\"";
+        case 12:
+            if (firstTime) {
+                varTemp = new Var("gps_indicated-ground-speed-kt",
+                                  "/instrumentation/gps/indicated-ground-speed-kt", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/gps/indicated-ground-speed-kt\"", varTemp});
+            }
+            return "\"/instrumentation/gps/indicated-ground-speed-kt\"";
+        case 13:
+            if (firstTime) {
+                varTemp = new Var("gps_indicated-vertical-speed",
+                                  "/instrumentation/gps/indicated-vertical-speed", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/gps/indicated-vertical-speed\"", varTemp});
+            }
+            return "\"/instrumentation/gps/indicated-vertical-speed\"";
+        case 14:
+            if (firstTime) {
+                varTemp = new Var("indicated-heading-deg",
+                                  "/instrumentation/heading-indicator/indicated-heading-deg", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/heading-indicator/indicated-heading-deg\"", varTemp});
+            }
+            return "\"/instrumentation/heading-indicator/indicated-heading-deg\"";
+        case 15:
+            if (firstTime) {
+                varTemp = new Var("magnetic-compass_indicated-heading-deg",
+                                  "/instrumentation/magnetic-compass/indicated-heading-deg", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/magnetic-compass/indicated-heading-deg\"", varTemp});
+            }
+            return "\"/instrumentation/magnetic-compass/indicated-heading-deg\"";
+        case 16:
+            if (firstTime) {
+                varTemp = new Var("slip-skid-ball_indicated-slip-skid",
+                                  "/instrumentation/slip-skid-ball/indicated-slip-skid", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/slip-skid-ball/indicated-slip-skid\"", varTemp});
+            }
+            return "\"/instrumentation/slip-skid-ball/indicated-slip-skid\"";
+        case 17:
+            if (firstTime) {
+                varTemp = new Var("turn-indicator_indicated-turn-rate",
+                                  "/instrumentation/turn-indicator/indicated-turn-rate", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/turn-indicator/indicated-turn-rate\"", varTemp});
+            }
+            return "\"/instrumentation/turn-indicator/indicated-turn-rate\"";
+        case 18:
+            if (firstTime) {
+                varTemp = new Var("vertical-speed-indicator_indicated-speed-fpm",
+                                  "/instrumentation/vertical-speed-indicator/indicated-speed-fpm", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/vertical-speed-indicator/indicated-speed-fpm\"", varTemp});
+            }
+            return "\"/instrumentation/vertical-speed-indicator/indicated-speed-fpm\"";
+        case 19:
+            if (firstTime) {
+                varTemp = new Var("flight_aileron",
+                                  "/controls/flight/aileron", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/controls/flight/aileron\"", varTemp});
+            }
+            return "\"/controls/flight/aileron\"";
+        case 20:
+            if (firstTime) {
+                varTemp = new Var("flight_elevator",
+                                  "/controls/flight/elevator", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/controls/flight/elevator\"", varTemp});
+            }
+            return "\"/controls/flight/elevator\"";
+        case 21:
+            if (firstTime) {
+                varTemp = new Var("flight_rudder",
+                                  "/controls/flight/rudder", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/controls/flight/rudder\"", varTemp});
+            }
+            return "\"/controls/flight/rudder\"";
+        case 22:
+            if (firstTime) {
+                varTemp = new Var("flight_flaps",
+                                  "/controls/flight/flaps", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/controls/flight/flaps\"", varTemp});
+            }
+            return "\"/controls/flight/flaps\"";
+        case 23:
+            if (firstTime) {
+                varTemp = new Var("engine_throttle",
+                                  "/controls/engines/engine/throttle", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/controls/engines/engine/throttle\"", varTemp});
+            }
+            return "\"/controls/engines/engine/throttle\"";
+        case 24:
+            if (firstTime) {
+                varTemp = new Var("current-engine_throttle",
+                                  "/controls/engines/current-engine/throttle", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/controls/engines/current-engine/throttle\"", varTemp});
+            }
+            return "\"/controls/engines/current-engine/throttle\"";
+        case 25:
+            if (firstTime) {
+                varTemp = new Var("switches_master-avionicse",
+                                  "/controls/switches/master-avionics", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/controls/switches/master-avionics\"", varTemp});
+            }
+            return "\"/controls/switches/master-avionics\"";
+        case 26:
+            if (firstTime) {
+                varTemp = new Var("switches_starter",
+                                  "/controls/switches/starter", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/controls/switches/starter\"", varTemp});
+            }
+            return "\"/controls/switches/starter\"";
+        case 27:
+            if (firstTime) {
+                varTemp = new Var("active-engine_auto-start",
+                                  "/engines/active-engine/auto-start", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/engines/active-engine/auto-start\"", varTemp});
+            }
+            return "\"/engines/active-engine/auto-start\"";
+        case 28:
+            if (firstTime) {
+                varTemp = new Var("flight_speedbrake",
+                                  "/controls/flight/speedbrake", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/controls/flight/speedbrake\"", varTemp});
+            }
+            return "\"/controls/flight/speedbrake\"";
+        case 29:
+            if (firstTime) {
+                varTemp = new Var("c172p_brake-parking",
+                                  "/sim/model/c172p/brake-parking", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/sim/model/c172p/brake-parking\"", varTemp});
+            }
+            return "\"/sim/model/c172p/brake-parking\"";
+        case 30:
+            if (firstTime) {
+                varTemp = new Var("engine_primer",
+                                  "/controls/engines/engine/primer", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/controls/engines/engine/primer\"", varTemp});
+            }
+            return "\"/controls/engines/engine/primer\"";
+        case 31:
+            if (firstTime) {
+                varTemp = new Var("current-engine_mixture",
+                                  "/controls/engines/current-engine/mixture", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/controls/engines/current-engine/mixture\"", varTemp});
+            }
+            return "\"/controls/engines/current-engine/mixture\"";
+        case 32:
+            if (firstTime) {
+                varTemp = new Var("switches_master-bat",
+                                  "/controls/switches/master-bat", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/controls/switches/master-bat\"", varTemp});
+            }
+            return "\"/controls/switches/master-bat\"";
+        case 33:
+            if (firstTime) {
+                varTemp = new Var("switches_master-alt",
+                                  "/controls/switches/master-alt", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/controls/switches/master-alt\"", varTemp});
+            }
+            return "\"/controls/switches/master-alt\"";
+        case 34:
+            if (firstTime) {
+                varTemp = new Var("engine_rpm",
+                                  "/engines/engine/rpm", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/engines/engine/rpm\"", varTemp});
+            }
+            return "\"/engines/engine/rpm\"";
+        case 35:
+            if (firstTime) {
+                varTemp = new Var("attitude-indicator_indicated-pitch-deg",
+                                  "/instrumentation/attitude-indicator/indicated-pitch-deg", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/attitude-indicator/indicated-pitch-deg\"", varTemp});
+            }
+            return "\"/instrumentation/attitude-indicator/indicated-pitch-deg\"";
+        case 36:
+            if (firstTime) {
+                cout << "last assign openServerCommand" << endl;
+                varTemp = new Var("attitude-indicator_internal-pitch-deg",
+                                  "/instrumentation/attitude-indicator/internal-pitch-deg", "<-");
+                varTemp->setValue(stof(sub));
+                this->varTable->insert({"\"/instrumentation/attitude-indicator/internal-pitch-deg\"", varTemp});
+            }
+            return "\"/instrumentation/attitude-indicator/internal-pitch-deg\"";
+    }
+}
+
+void OpenServerCommand::notFirstRead(string sub, int i) {
+    string sim;
+    sim = initializeVars(sub, i, false);
+    // finding the var from the server map
+    auto pos = this->varTable->find(sim);
+    if (pos == this->varTable->end()) {
+        // check if it's assignment line (rpm = 0)
+        /*** error ***/
+    } else {
+        pos->second->setValue(stof(sub));
+    }
+}
