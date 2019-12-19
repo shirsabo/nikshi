@@ -131,15 +131,8 @@ string *lexer(char *argv[]) {
         while ((pos = line.find_first_of(" ,(\t)=", prev)) != std::string::npos) {
             if (pos > prev) {
                 string sub1 = line.substr(prev, pos - prev);
-                if (sub1.compare("While") || sub1.compare("while")) {
-
-                }
-                if (line[pos] == '=') {
-                    deque.push_back(sub1);
-                    string sub2 = line.substr(pos - prev + 1, line.length());
-                    deque.push_back(sub2);
-                    sizeDeque += 2;
-                    continue;
+                if (sub1 =="While" || sub1 == "while") {
+                    cout<< "2";
                 }
                 // entering to the deque
                 deque.push_back(sub1);
@@ -148,6 +141,16 @@ string *lexer(char *argv[]) {
                 line = sub2;
                 prev = 0;
                 continue;
+            }
+            if (line[pos] == '=') {
+                //string sub1 = line.substr(prev, pos - prev);
+                //deque.push_back(sub1);
+                deque.push_back("=");
+                string sub2 = line.substr(pos - prev + 1, line.length());
+                deque.push_back(sub2);
+                sizeDeque += 3;
+                prev = 0;
+                break;
             }
             prev = pos + 1;
         }
