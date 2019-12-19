@@ -4,7 +4,6 @@
 #include "DefineVarCommand.h"
 #include "Command.h"
 #include <string>
-#include "ConditionParser.h"
 #include <stdlib.h>
 
 DefineVarCommand::DefineVarCommand(unordered_map<string, Var *> *varTableIn,  unordered_map<string, Var *> *server_mapIn) {

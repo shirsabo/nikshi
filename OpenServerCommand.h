@@ -15,8 +15,10 @@
 class OpenServerCommand: public Command {
 private:
     std::unordered_map<string, Var *> *varTable;
+    int *offWhileServer;
+    int client_socket = 0;
 public:
-    OpenServerCommand(std::unordered_map<string, Var *> *pMap);
+    OpenServerCommand(std::unordered_map<string, Var *> *pMap, int *offWhileServer);
 
     virtual int execute(string*);
 
@@ -27,6 +29,8 @@ public:
     void notFirstRead(string s, int i);
 
     int dataEntryPoint(string *s);
+    int acceptence(string *s);
+    void clientSetter(int socket);
 };
 
 #endif //EX3_OPENSERVERCOMMAND_H

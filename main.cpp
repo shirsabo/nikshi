@@ -15,7 +15,6 @@
 #include "SleepCommand.h"
 #include <unordered_map>
 #include <thread>
-#include <pthread.h>
 
 int sizeAr = 0;
 using namespace std;
@@ -23,51 +22,71 @@ using namespace std;
 string *lexer(char *argv[]);
 
 void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var *> *varTable,
-               unordered_map<string, Var *> *server_map);
+               unordered_map<string, Var *> *server_map, int *offWhileServer);
 
-void parser(unordered_map<string, Command *> *mp, string *array, int size);
+void parser(unordered_map<string, Command *> *mp, string *array, int size, int *offWhileServer);
 
 int main(int argsc, char *argv[]) {
-
+    int* offWhileServer;
+    int off = 0;
+    offWhileServer = & off;
     string *array = lexer(argv);
     // creating map for the open server command
-    unordered_map<string, Var*> *server_map = new unordered_map<string, Var*>;
+    unordered_map<string, Var *> *server_map = new unordered_map<string, Var *>;
     // creating var table
-    unordered_map<string, Var *> *varTable = new unordered_map<string, Var*>;
+    unordered_map<string, Var *> *varTable = new unordered_map<string, Var *>;
     // creating a map of the commands
     unordered_map<string, Command *> mp;
-    createMap(&mp, varTable, server_map);
+    createMap(&mp, varTable, server_map, offWhileServer);
     for (int i = 0; i < sizeAr; ++i) {
         cout << array[i] << endl;
     }
-    parser(&mp, array, sizeAr);
+    parser(&mp, array, sizeAr, offWhileServer);
+    if (true) {
+        cout<< "2";
+    }
     return 0;
 }
 
-void parser(unordered_map<string, Command *> *mp, string *array, int size) {
+void parser(unordered_map<string, Command *> *mp, string *array, int size, int *offWhileServer) {
     int index = 0;
+
+    // executing the first two lines
+    auto pos = mp->find(array[index]);
+    if (pos == mp->end()) {
+        // check if it's assignment line (rpm = 0)
+        /*** error ***/
+    }
+
+    Command *c = pos->second;
+    OpenServerCommand c1 = *((OpenServerCommand *) c);
+    // waiting for the server to accept the call
+    thread t1(&OpenServerCommand::acceptence, ref((c1)), &(array[index + 1]));
+    t1.join();
+    // strting to get information from the server
+    thread t2(&OpenServerCommand::dataEntryPoint, ref((c1)), &(array[index + 1]));
+
     while (index < size) {
         auto pos = mp->find(array[index]);
         if (pos == mp->end()) {
             // check if it's assignment line (rpm = 0)
             /*** error ***/
+            index+=1;
         } else {
             Command *c = pos->second;
             string check1 = array[index];
             string check = array[index + 1];
-            if(index == 0){
-                OpenServerCommand c1 = *((OpenServerCommand*)c);
-                std::thread th(&OpenServerCommand::dataEntryPoint, ref((c1)), & (array[index + 1]));
-                th.join();
-            }
             index += c->execute(&array[index + 1]);
         }
     }
+    // ending the loop in the open server command
+    *offWhileServer = 1;
+    t1.join();
 }
 
 void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var *> *varTable,
-               unordered_map<string, Var *> *server_map) {
-    OpenServerCommand *openCommand = new OpenServerCommand(server_map);
+        unordered_map<string, Var *> *server_map, int *offWhileServer) {
+    OpenServerCommand *openCommand = new OpenServerCommand(server_map, offWhileServer);
     ConnectCommand *connect = new ConnectCommand;
     DefineVarCommand *varCommand = new DefineVarCommand(varTable, server_map);
     PrintCommand *print = new PrintCommand(varTable);
@@ -75,7 +94,6 @@ void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var
     //must be the last one we enter because it has a map of the commands too
     ConditionParser *I = new IfCommand(pMap, varTable);
     ConditionParser *L = new LoopCommand(pMap, varTable);
-
     pMap->insert(pair<string, Command *>("openDataServer", openCommand));
     pMap->insert(pair<string, Command *>("connectControlClient", connect));
     pMap->insert(pair<string, Command *>("var", varCommand));
@@ -118,7 +136,7 @@ string *lexer(char *argv[]) {
         }
         // printing the {,} and the end of the line if it does'nt contain any of the checked chars
         if (((line != "" && line != ")") && (line.find_first_of(" ,(\t)", prev)) == std::string::npos)
-        || (line.find_first_of("{}", prev)) != std::string::npos) {
+            || (line.find_first_of("{}", prev)) != std::string::npos) {
             deque.push_back(line);
             sizeDeque += 1;
             continue;
