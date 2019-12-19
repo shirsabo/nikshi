@@ -68,11 +68,11 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
     // waiting for the server to accept the call
     thread t1(&OpenServerCommand::acceptence, ref((c1)), &(array[index + 1]));
     t1.join();
-
+    thread t2(&OpenServerCommand::initializeServerMap, ref((c1)), &(array[index + 1]));
+    t2.join();
     // strting to get information from the server
-    thread t2(&OpenServerCommand::dataEntryPoint, ref((c1)), &(array[index + 1]));
+    thread t3(&OpenServerCommand::dataEntryPoint, ref((c1)), &(array[index + 1]));
     while (index < size) {
-        cout << "reading from the file"<<endl;
         auto pos = mp->find(array[index]);
         if (pos == mp->end()) {
             // check if it's assignment line (rpm = 0)
@@ -87,7 +87,7 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
     }
     // ending the loop in the open server command
     *offWhileServer = 1;
-    t2.join();
+    t3.join();
 }
 
 void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var *> *varTable,

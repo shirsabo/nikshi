@@ -8,7 +8,6 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <deque>
-#include <thread>
 
 using namespace std;
 
@@ -25,22 +24,30 @@ OpenServerCommand::OpenServerCommand(std::unordered_map<string, Var *> *pMap, in
 int OpenServerCommand::dataEntryPoint(string *s) {
     //reading from client
     char buffer[1024] = {0};
-    int i = 0;
+    //int i = 0;
     while (!*offWhileServer) {
         int valread = ::read(client_socket, buffer, 1024);
         cout << buffer << endl;
-        // updating the var table according to the buffer
-        // change the value
-        if (i == 0) {
-            cout << "first time" << endl;
-            updateMap(buffer, true);
-        } else {
-            cout << "second time" << endl;
+        // updating the var table according to the buffer - change the value
+        //if (i == 0) {
+            //cout << "first time" << endl;
+            //updateMap(buffer, true);
+        //} else {
             updateMap(buffer, false);
-        }
-        i++;
+        //}
+      //  i++;
     }
     return 0;
+}
+
+void OpenServerCommand::initializeServerMap(string *s) {
+    //reading from client
+    char buffer[1024] = {0};
+    int valread = ::read(client_socket, buffer, 1024);
+    cout << buffer << endl;
+    // updating the var table according to the buffer
+    cout << "first time" << endl;
+    updateMap(buffer, true);
 }
 
 void OpenServerCommand::updateMap(char buffer[1024], bool firstTime) {

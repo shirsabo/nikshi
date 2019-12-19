@@ -33,6 +33,8 @@ public:
     int acceptence(string *s);
 
     void clientSetter(int socket);
+
+    void initializeServerMap(string *s);
 };
 
 #endif //EX3_OPENSERVERCOMMAND_H

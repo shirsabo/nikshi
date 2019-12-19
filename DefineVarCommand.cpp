@@ -151,6 +151,7 @@ Var *DefineVarCommand::checkInServerMap(string *s) {
     if (pos == server_map->end()) {
         return nullptr;
     } else {
+        cout<< "found in server map"<<endl;
         return pos->second;
     }
 }
