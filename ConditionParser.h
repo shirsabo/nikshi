@@ -27,5 +27,7 @@ public:
     static bool isNumber(string s);
 
     int executeHelper(string *s);
+
+    double useShuntingYard(string *s);
 };
 #endif //EX3_CONDITIONPARSER_H

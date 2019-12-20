@@ -27,23 +27,40 @@ void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var
 
 void parser(unordered_map<string, Command *> *mp, string *array, int size, int *offWhileServer);
 
+string edit(string s);
+
+void editConditionParser(string s, deque<string> *deque, int *sizeDeque);
+
+bool isSign(char &c);
+
 int main(int argsc, char *argv[]) {
-    int* offWhileServer;
+    int *offWhileServer;
     int off = 0;
-    offWhileServer = & off;
+    offWhileServer = &off;
     string *array = lexer(argv);
     // creating map for the open server command
     unordered_map<string, Var *> *server_map = new unordered_map<string, Var *>;
     // creating var table
     unordered_map<string, Var *> *varTable = new unordered_map<string, Var *>;
     /*
-    Var *va = new Var("s", "","");
+    Var *va = new Var("warp", "","");
     va->setValue(5);
-    varTable->insert({"s", va});
+    varTable->insert({"warp", va});
     Interpreter* interpret = new Interpreter();
-    interpret->setVariables(varTable);
-     */
-
+    Expression* ex1 = nullptr;
+    try {
+        interpret->setVariables(varTable);
+        ex1 = interpret->interpret("-3+warp");
+        std::cout << "1: "<< ex1->calculate() << std::endl;
+        delete ex1;
+    } catch(const char* e) {
+        if (ex1 != nullptr) {
+            delete ex1;
+        }
+        std::cout << e << std::endl;
+    }
+    delete(interpret);
+*/
     // creating a map of the commands
     unordered_map<string, Command *> mp;
     createMap(&mp, varTable, server_map, offWhileServer);
@@ -77,7 +94,7 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
         if (pos == mp->end()) {
             // check if it's assignment line (rpm = 0)
             /*** error ***/
-            index+=1;
+            index += 1;
         } else {
             Command *c = pos->second;
             string check1 = array[index];
@@ -91,7 +108,7 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
 }
 
 void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var *> *varTable,
-        unordered_map<string, Var *> *server_map, int *offWhileServer) {
+               unordered_map<string, Var *> *server_map, int *offWhileServer) {
     OpenServerCommand *openCommand = new OpenServerCommand(server_map, offWhileServer);
     ConnectCommand *connect = new ConnectCommand;
     DefineVarCommand *varCommand = new DefineVarCommand(varTable, server_map);
@@ -108,10 +125,6 @@ void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var
     pMap->insert(pair<string, Command *>("Sleep", sleep));
     pMap->insert(pair<string, Command *>("while", L));
     pMap->insert(pair<string, Command *>("if", I));
-    pMap->insert(pair<string, Command *>("print", print));
-    pMap->insert(pair<string, Command *>("sleep", sleep));
-    pMap->insert(pair<string, Command *>("While", L));
-    pMap->insert(pair<string, Command *>("If", I));
 }
 
 string *lexer(char *argv[]) {
@@ -132,13 +145,22 @@ string *lexer(char *argv[]) {
         while ((pos = line.find_first_of(" ,(\t)=", prev)) != std::string::npos) {
             if (pos > prev) {
                 string sub1 = line.substr(prev, pos - prev);
-                if (sub1 =="While" || sub1 == "while") {
-                    cout<< "2";
-                }
                 // entering to the deque
                 deque.push_back(sub1);
                 sizeDeque += 1;
+                if (line[pos] == '=') {
+                    deque.push_back("=");
+                    string sub2 = line.substr(pos - prev + 1, line.length());
+                    sub2 = edit(sub2);
+                    deque.push_back(sub2);
+                    sizeDeque += 2;
+                    prev = 0;
+                    break;
+                }
                 string sub2 = line.substr(pos - prev + 1, line.length());
+                if (sub1 == "while" || sub1 == "if") {
+                    editConditionParser(sub2, &deque, &sizeDeque);
+                }
                 line = sub2;
                 prev = 0;
                 continue;
@@ -148,6 +170,7 @@ string *lexer(char *argv[]) {
                 //deque.push_back(sub1);
                 deque.push_back("=");
                 string sub2 = line.substr(pos - prev + 1, line.length());
+                sub2 = edit(sub2);
                 deque.push_back(sub2);
                 sizeDeque += 2;
                 prev = 0;
@@ -183,3 +206,52 @@ string *lexer(char *argv[]) {
     return (array);
 }
 
+void editConditionParser(string s, deque <string> *deque, int *sizeDeque) {
+    size_t prev = 0, pos;
+    string afterSign = s;
+    if ((pos = s.find_first_of("<>=!", prev)) != std::string::npos) {
+        string cut1 = s.substr(prev, pos);
+        // removing spaces
+        cut1 = edit(cut1);
+        deque->push_back(cut1);
+        *sizeDeque += 1;
+        // checking if the next char is a sign too
+        string cut2 = s.substr(pos, s.length());
+        s = cut2;
+        string sign;
+        if (isSign(cut2[1])) {
+            sign = s.substr(0, 2);
+            afterSign = s.substr(2, s.length());
+        } else {
+            sign = s.substr(0, 1);
+            afterSign = s.substr(2, s.length());
+        }
+        deque->push_back(sign);
+        sizeDeque += 1;
+    }
+    // removing the '{'
+    if ((pos = afterSign.find_first_of("{", prev)) != std::string::npos) {
+        afterSign = afterSign.substr(0, pos);
+    }
+    afterSign = edit(afterSign);
+    deque->push_back(afterSign);
+    deque->push_back("{");
+    *sizeDeque += 2;
+}
+
+bool isSign(char &c) {
+    if (c == '<' || c == '>' || c == '=') {
+        return true;
+    }
+    return false;
+}
+
+string edit(string s) {
+    size_t prev = 0, pos;
+    while ((pos = s.find_first_of(" ", prev)) != std::string::npos) {
+        string cut1 = s.substr(prev, pos);
+        string cut2 = s.substr(pos + 1, s.length());
+        s = cut1 + cut2;
+    }
+    return s;
+}

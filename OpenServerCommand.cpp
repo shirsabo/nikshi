@@ -67,9 +67,15 @@ void OpenServerCommand::updateMap(char buffer[1024], bool firstTime) {
             string sub2 = s.substr(pos - prev + 1, s.length());
             s = sub2;
             prev = 0;
+            if (i == 36) {
+                i = 0;
+            }
             continue;
         }
         prev = pos + 1;
+        if (i == 36) {
+            i = 0;
+        }
     }
 }
 

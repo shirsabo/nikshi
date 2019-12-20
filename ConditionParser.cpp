@@ -1,4 +1,5 @@
 #include "ConditionParser.h"
+#include "ShuntingYard.h"
 
 //
 // Created by nikol on 13/12/2019.
@@ -26,8 +27,7 @@ void ConditionParser::parser(unordered_map<string, Command *> *mp, string *array
 bool ConditionParser::checkCondition(string *original) {
     double y = 0, x = 0;
     string s = *original;
-    // checking if it's a var
-
+    /*
     auto pos = ((this->varTable))->find(s);
     if (pos == this->varTable->end()) {
         // checking if it's a number
@@ -40,6 +40,9 @@ bool ConditionParser::checkCondition(string *original) {
         // it's a var
         x = pos->second->getValue();
     }
+     */
+    // calculating using the shunting yard
+    x = useShuntingYard(original);
     // moving to the sign
     string *sign = original + 1;
     string check = *sign;
@@ -112,16 +115,13 @@ bool ConditionParser::isNumber(string s) {
 
 int ConditionParser::executeHelper(string *s) {
     string *original = s;
+    string check1 = *original;
 // checking what is the size of the loop command
 // initializing because of the words: {,}
-    int sizeLoopCommand = 3, sizeUntilEnd = 0;
-    while (*s != "{") {
-        string check = *s;
-        sizeLoopCommand += 1;
-        s += 1;
-    }
+    int sizeLoopCommand = 4, sizeUntilEnd = 0;
     bool condition = checkCondition(original);
 // moving after the {
+/*
     s += 1;
     original = s;
     while (*s != "}") {
@@ -130,6 +130,7 @@ int ConditionParser::executeHelper(string *s) {
         sizeLoopCommand += 1;
         s += 1;
     }
+    */
 // if the condition is false - returning to the main without doing anything
     if (!condition) {
         return sizeLoopCommand;
@@ -141,4 +142,23 @@ int ConditionParser::executeHelper(string *s) {
     } else {
         return sizeLoopCommand;
     }
+}
+
+double ConditionParser::useShuntingYard(string *s) {
+    double x;
+    Interpreter* interpret = new Interpreter();
+    Expression* ex1 = nullptr;
+    try {
+        interpret->setVariables(this->varTable);
+        ex1 = interpret->interpret(*s);
+        x = ex1->calculate();
+        delete ex1;
+    } catch(const char* e) {
+        if (ex1 != nullptr) {
+            delete ex1;
+        }
+        std::cout << "error in shunting yard" << std::endl;
+    }
+    delete(interpret);
+    return x;
 }
