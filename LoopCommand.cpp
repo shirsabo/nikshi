@@ -13,7 +13,11 @@ LoopCommand::LoopCommand(unordered_map<string, Command *> *mapCommandIn, unorder
 }
 
 int LoopCommand::execute(string *s) {
-    return executeHelper(s);
+    int steps = executeHelper(s);
+    if (this->getCondition()) {
+        return 0;
+    }
+    return steps;
 }
 
 LoopCommand::~LoopCommand() {

@@ -80,6 +80,7 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
         // check if it's assignment line (rpm = 0)
         /*** error ***/
     }
+/*
     Command *c = pos->second;
     OpenServerCommand c1 = *((OpenServerCommand *) c);
     // waiting for the server to accept the call
@@ -89,6 +90,7 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
     t2.join();
     // strting to get information from the server
     thread t3(&OpenServerCommand::dataEntryPoint, ref((c1)), &(array[index + 1]));
+*/
     while (index < size) {
         auto pos = mp->find(array[index]);
         if (pos == mp->end()) {
@@ -104,7 +106,7 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
     }
     // ending the loop in the open server command
     *offWhileServer = 1;
-    t3.join();
+    //t3.join();
 }
 
 void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var *> *varTable,
@@ -150,7 +152,7 @@ string *lexer(char *argv[]) {
                 sizeDeque += 1;
                 if (line[pos] == '=') {
                     deque.push_back("=");
-                    string sub2 = line.substr(pos - prev + 1, line.length());
+                    string sub2 = line.substr(pos + 1, line.length());
                     sub2 = edit(sub2);
                     deque.push_back(sub2);
                     sizeDeque += 2;
@@ -160,21 +162,35 @@ string *lexer(char *argv[]) {
                 string sub2 = line.substr(pos - prev + 1, line.length());
                 if (sub1 == "while" || sub1 == "if") {
                     editConditionParser(sub2, &deque, &sizeDeque);
+                    prev=0;
+                    line = "";
+                    break;
                 }
                 line = sub2;
                 prev = 0;
                 continue;
             }
             if (line[pos] == '=') {
-                //string sub1 = line.substr(prev, pos - prev);
-                //deque.push_back(sub1);
-                deque.push_back("=");
-                string sub2 = line.substr(pos - prev + 1, line.length());
-                sub2 = edit(sub2);
-                deque.push_back(sub2);
-                sizeDeque += 2;
-                prev = 0;
-                break;
+                if (pos == 0) {
+                    deque.push_back("=");
+                    string sub2 = line.substr(pos - prev + 1, line.length());
+                    sub2 = edit(sub2);
+                    deque.push_back(sub2);
+                    sizeDeque += 2;
+                    prev = 0;
+                    break;
+                } else {
+                    //string sub1 = line.substr(prev, pos - prev);
+                    //deque.push_back(sub1);
+                    // deque.push_back("=");
+                    string sub2 = line.substr(pos - prev + 1, line.length());
+                    line = sub2;
+                    //sub2 = edit(sub2);
+                    //deque.push_back(sub2);
+                    //sizeDeque += 2;
+                    prev = 0;
+                    continue;
+                }
             }
             prev = pos + 1;
         }
@@ -183,9 +199,10 @@ string *lexer(char *argv[]) {
         }
         // printing the {,} and the end of the line if it does'nt contain any of the checked chars
         if (((line != "" && line != ")") && (line.find_first_of(" ,(\t)", prev)) == std::string::npos)
-            || (line.find_first_of("{}", prev)) != std::string::npos) {
+            || (pos = line.find_first_of("{}", prev)) != std::string::npos) {
             deque.push_back(line);
             sizeDeque += 1;
+            line = "";
             continue;
         }
     }
@@ -224,7 +241,7 @@ void editConditionParser(string s, deque <string> *deque, int *sizeDeque) {
             afterSign = s.substr(2, s.length());
         } else {
             sign = s.substr(0, 1);
-            afterSign = s.substr(2, s.length());
+            afterSign = s.substr(1, s.length());
         }
         deque->push_back(sign);
         sizeDeque += 1;

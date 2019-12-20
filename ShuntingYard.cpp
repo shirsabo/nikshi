@@ -506,6 +506,10 @@ void Interpreter::makeExpressionVar(char token) {
         } else {
             combinesChars = combinesChars + token;
             this->outputOueue.pop();
+            if (this->outputOueue.size() == 0) {
+                flag2 = 0;
+                continue;
+            }
             token = this->outputOueue.front();
         }
         if ((token == ',') || this->checkIfOperator(token)) {

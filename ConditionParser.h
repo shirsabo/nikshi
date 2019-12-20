@@ -12,6 +12,8 @@
 #include <functional>
 
 class ConditionParser: public Command {
+private:
+    bool condition = false;
 public:
     unordered_map<string, Command *> *commandMap;
     unordered_map <string, Var*>* varTable;
@@ -29,5 +31,7 @@ public:
     int executeHelper(string *s);
 
     double useShuntingYard(string *s);
+
+    bool getCondition();
 };
 #endif //EX3_CONDITIONPARSER_H

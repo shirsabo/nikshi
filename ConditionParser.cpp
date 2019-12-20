@@ -50,18 +50,7 @@ bool ConditionParser::checkCondition(string *original) {
     original = original + 2;
     string num = *original;
     std::string::size_type sz = 0;
-    auto pis = ((this->varTable))->find(*original);
-    if (pis == this->varTable->end()) {
-        // checking if it's a number
-        if (isNumber(*original)) {
-            y = stod(*original, reinterpret_cast<size_t *>(sz));
-        } else {
-            throw "unvalid input";
-        }
-    } else {
-        // it's a var
-        y = pis->second->getValue();
-    }
+    y = useShuntingYard(original);
     if (*sign == "==") {
         if (x == y) {
             return true;
@@ -118,33 +107,46 @@ int ConditionParser::executeHelper(string *s) {
     string check1 = *original;
 // checking what is the size of the loop command
 // initializing because of the words: {,}
-    int sizeLoopCommand = 4, sizeUntilEnd = 0;
-    bool condition = checkCondition(original);
-// moving after the {
-/*
+    int sizeLoopCommand = 3, sizeUntilEnd = 0;
+    condition = checkCondition(original);
+string shir = *(s+4);
+    while (*s != "{") {
+        string check = *s;
+        //sizeUntilEnd += 1;
+        sizeLoopCommand += 1;
+        s += 1;
+    }
+    // moving after the {
     s += 1;
+    string nikol = *s;
     original = s;
     while (*s != "}") {
         string check = *s;
+        if (*s == ""){
+            continue;
+        }
         sizeUntilEnd += 1;
         sizeLoopCommand += 1;
         s += 1;
     }
-    */
 // if the condition is false - returning to the main without doing anything
     if (!condition) {
         return sizeLoopCommand;
     }
 // executing the loop if the condition is true
     parser(this->commandMap, original, sizeUntilEnd);
-    if (typeid(this).name() == "LoppCommand") {
+    return sizeLoopCommand;
+    /*
+    if (typeid(this).name() == "LoopCommand") {
         return 0;
     } else {
         return sizeLoopCommand;
     }
+     */
 }
 
 double ConditionParser::useShuntingYard(string *s) {
+    string see = *s;
     double x;
     Interpreter* interpret = new Interpreter();
     Expression* ex1 = nullptr;
@@ -161,4 +163,8 @@ double ConditionParser::useShuntingYard(string *s) {
     }
     delete(interpret);
     return x;
+}
+
+bool ConditionParser::getCondition() {
+    return condition;
 }
