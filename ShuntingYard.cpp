@@ -18,46 +18,56 @@
 
 
 BinaryOperator::BinaryOperator(Expression *left, Expression *right) : left1(left), right1(right) {}
+
 BinaryOperator::~BinaryOperator() {
 }
+
 Expression *BinaryOperator::getRight() const {
     return right1;
 }
+
 Expression *BinaryOperator::getLeft() const {
     return left1;
 }
 
 
-
 UnaryOperator::UnaryOperator(Expression *expression) : expression1(expression) {}
+
 UnaryOperator::~UnaryOperator() {
 }
+
 double UnaryOperator::calculate() {
     return expression1->calculate();
 }
+
 void UnaryOperator::setExpression(Expression *expression) {
     UnaryOperator::expression1 = expression;
 }
+
 Expression *UnaryOperator::getExpression() const {
     return expression1;
 }
 
 
-
 Value::Value(double val) : val1(val) {}
+
 double Value::calculate() {
     return val1;
 }
+
 Value::~Value() {}
 
 
 Variable::Variable(const string &name, double value) : name1(name), value1(value) {}
+
 double Variable::calculate() {
     return value1;
 }
+
 void Variable::setVariable(double val) {
     value1 = val;
 }
+
 double Variable::getVal() const {
     return value1;
 }
@@ -65,55 +75,68 @@ double Variable::getVal() const {
 const string &Variable::getName() const {
     return name1;
 }
-Variable& Variable::operator++(int) {
+
+Variable &Variable::operator++(int) {
     this->setVariable(this->getVal() + 1);
     return *this;
 }
-Variable& Variable::operator--() {
+
+Variable &Variable::operator--() {
     this->setVariable(this->getVal() - 1);
     return *this;
 }
-Variable& Variable::operator++() {
+
+Variable &Variable::operator++() {
     this->setVariable(this->getVal() + 1);
     return *this;
 }
-Variable& Variable::operator--(int) {
+
+Variable &Variable::operator--(int) {
     this->setVariable(this->getVal() - 1);
     return *this;
 }
-Variable& Variable::operator+=(double num) {
+
+Variable &Variable::operator+=(double num) {
     this->setVariable(value1 + num);
     return *this;
 }
-Variable& Variable::operator-=(double num) {
+
+Variable &Variable::operator-=(double num) {
     this->setVariable(value1 - num);
     return *this;
 }
+
 Variable::~Variable() {}
 
 
 UPlus::UPlus(Expression *expression) : UnaryOperator(expression) {}
+
 double UPlus::calculate() {
     return this->getExpression()->calculate();
 }
+
 UPlus::~UPlus() {
     delete this->getExpression();
 }
 
 
 UMinus::UMinus(Expression *expression) : UnaryOperator(expression) {}
+
 double UMinus::calculate() {
     return -1 * this->getExpression()->calculate();
 }
+
 UMinus::~UMinus() {
     delete this->getExpression();
 }
 
 
 Plus::Plus(Expression *left, Expression *right) : BinaryOperator(left, right) {}
+
 double Plus::calculate() {
     return getRight()->calculate() + getLeft()->calculate();
 }
+
 Plus::~Plus() {
     delete this->getLeft();
     delete this->getRight();
@@ -122,9 +145,11 @@ Plus::~Plus() {
 
 Minus::Minus(Expression *left, Expression *right) : BinaryOperator(left, right) {
 }
+
 double Minus::calculate() {
     return getLeft()->calculate() - getRight()->calculate();
 }
+
 Minus::~Minus() {
     delete this->getLeft();
     delete this->getRight();
@@ -132,9 +157,11 @@ Minus::~Minus() {
 
 
 Mul::Mul(Expression *left, Expression *right) : BinaryOperator(left, right) {}
+
 double Mul::calculate() {
     return getLeft()->calculate() * getRight()->calculate();
 }
+
 Mul::~Mul() {
     delete this->getLeft();
     delete this->getRight();
@@ -142,20 +169,23 @@ Mul::~Mul() {
 
 
 Div::Div(Expression *left, Expression *right) : BinaryOperator(left, right) {}
+
 double Div::calculate() {
     if (getRight()->calculate() == 0) {
         throw "error - devide in 0";
     }
     return getLeft()->calculate() / getRight()->calculate();
 }
+
 Div::~Div() {
     delete this->getLeft();
     delete this->getRight();
 }
+
 void Interpreter::setVariables(unordered_map<string, Var *> *varTable) {
 // Get an iterator pointing to begining of map
-    for (auto it =  varTable->begin(); it != varTable->end(); it ++) {
-        map1.insert({it->second->getName(),it->second->getValue()});
+    for (auto it = varTable->begin(); it != varTable->end(); it++) {
+        map1.insert({it->first, it->second->getValue()});
     }
 }
 
@@ -190,12 +220,12 @@ void Interpreter::setVariables(string s) {
         s = s.substr(j, s.size());
     }
 }
-bool Interpreter::isNumber(string s)
-{
-    for(unsigned int i = 0; i < s.length(); i++) {
+
+bool Interpreter::isNumber(string s) {
+    for (unsigned int i = 0; i < s.length(); i++) {
         if ((i == 0) && (isdigit(s[i]))) {
             continue;
-        } else if ((i == 0) && (s[i] == '-')){
+        } else if ((i == 0) && (s[i] == '-')) {
             if ((isdigit(s[1]))) {
                 continue;
             } else {
@@ -204,17 +234,18 @@ bool Interpreter::isNumber(string s)
         } else if (i == 0) {
             return false;
         }
-        if (isdigit(s[i]) == 0 && s[i] != '.'&& s[i] != '-') {
+        if (isdigit(s[i]) == 0 && s[i] != '.' && s[i] != '-') {
             return false;
         }
     }
     return true;
 }
-Expression* Interpreter::interpret(string s){
+
+Expression *Interpreter::interpret(string s) {
     string g1 = "could'nt calculate";
     string g2 = "unvalid input";
     string g3 = "variable wasn't initialized";
-    string g4= "could'nt find '('";
+    string g4 = "could'nt find '('";
     string g5 = "could'nt find ')'";
     try {
         this->readAndAllocate(s);
@@ -224,7 +255,7 @@ Expression* Interpreter::interpret(string s){
         //  throw "unvalid input";
         //}
         return exp;
-    } catch (exception e){
+    } catch (exception e) {
         if (g1.compare(e.what()) == 0) {
             throw g1;
         } else if (g2.compare(e.what()) == 0) {
@@ -256,15 +287,16 @@ Expression* Interpreter::interpret(string s){
     }
      */
 }
+
 // enters the tokens to the stack and queue
-void Interpreter::readAndAllocate(string s){
+void Interpreter::readAndAllocate(string s) {
     char previous = 0;
     int flag = 0;
     // reading every char and entering them to the right stack
-    for (unsigned int i = 0;i < s.length();i++) {
+    for (unsigned int i = 0; i < s.length(); i++) {
         flag = 1;
         char sub = s[i];
-        if (this->checkIfOperator(sub)){
+        if (this->checkIfOperator(sub)) {
             if ((outputOueue.size() != 0) && (outputOueue.back() != ',')) {
                 this->outputOueue.push(',');
             }
@@ -276,7 +308,8 @@ void Interpreter::readAndAllocate(string s){
             } else if (sub == '(' && isdigit(previous)) {
                 // 3(x)
                 throw "unvalid input";
-            } else if ((sub != '(' && sub !=')') && (previous != '(' && previous != ')') && checkIfOperator(previous)) {
+            } else if ((sub != '(' && sub != ')') && (previous != '(' && previous != ')') &&
+                       checkIfOperator(previous)) {
                 // 3+-+-4
                 throw "unvalid input";
             }
@@ -298,6 +331,7 @@ void Interpreter::readAndAllocate(string s){
         throw "unvalid input";
     }
 }
+
 int Interpreter::checkIfOperator(char sub) {
     if ((sub == '+') || (sub == '-') || (sub == '*') || (sub == '/') || (sub == '(')
         || (sub == ')') || (sub == '#') || (sub == '$')) {
@@ -306,6 +340,7 @@ int Interpreter::checkIfOperator(char sub) {
         return 0;
     }
 }
+
 void Interpreter::manageOperators(char enterOp, char previous) {
     //checking the precedence of the entered operator and the last one in the stack
     if (this->operatorStuck.empty() && enterOp != ')') {
@@ -318,11 +353,11 @@ void Interpreter::manageOperators(char enterOp, char previous) {
         if (precedence(enterOp, stuckOp, previous) == 0) {
             // the entered operator has higher precedence
             this->operatorStuck.push(enterOp);
-        } else if (precedence(enterOp, stuckOp, previous) == 1){
+        } else if (precedence(enterOp, stuckOp, previous) == 1) {
             // the entered operator has less/equal precedence
             this->outputOueue.push(this->operatorStuck.top());
             this->operatorStuck.pop();
-            while(precedence(enterOp, stuckOp, previous) == 0) {
+            while (precedence(enterOp, stuckOp, previous) == 0) {
                 this->outputOueue.push(this->operatorStuck.top());
                 this->operatorStuck.pop();
             }
@@ -349,6 +384,7 @@ void Interpreter::manageOperators(char enterOp, char previous) {
     }
     //}
 }
+
 // returns 1 if the stuck operator has bigger oe equal precedence and 0 if not, and 2 if its ')'
 // return 3 for UPlus, 4 FOR UMinus
 int Interpreter::precedence(char enter, char stuck, char previous) {
@@ -393,9 +429,10 @@ int Interpreter::precedence(char enter, char stuck, char previous) {
     // just for the compiler
     return 0;
 }
-void Interpreter::moveOperators(){
+
+void Interpreter::moveOperators() {
     while (!this->operatorStuck.empty()) {
-        if(this->operatorStuck.size() != 0 && this->operatorStuck.top() != '(') {
+        if (this->operatorStuck.size() != 0 && this->operatorStuck.top() != '(') {
             this->outputOueue.push(this->operatorStuck.top());
             this->operatorStuck.pop();
         } else if (this->operatorStuck.top() == '(') {
@@ -403,7 +440,8 @@ void Interpreter::moveOperators(){
         }
     }
 }
-Expression* Interpreter::solve(){
+
+Expression *Interpreter::solve() {
     // building an expression
     //int flag = 0;
     while (this->outputOueue.size() != 0) {
@@ -427,6 +465,7 @@ Expression* Interpreter::solve(){
     }
     return expressionStuck.top();
 }
+
 void Interpreter::makeExpressionOperator(char token) {
     // the token is an operator
     Expression *e1;
@@ -488,12 +527,17 @@ void Interpreter::makeExpressionOperator(char token) {
             break;
     }
 }
+
 void Interpreter::makeExpressionVar(char token) {
     char token2 = token;
-    outputOueue.pop();
-    token = outputOueue.front();
-    string combinesChars;
     int flag = 1, flag2 = 1;
+    outputOueue.pop();
+    if (outputOueue.size() > 0) {
+        token = outputOueue.front();
+    } else {
+        flag = 0;
+    }
+    string combinesChars;
     while (flag2 == 1) {
         if ((flag == 1) && (!(token == ',') && !(this->checkIfOperator(token)))) {
             combinesChars = std::string(1, token2) + token;
@@ -505,7 +549,9 @@ void Interpreter::makeExpressionVar(char token) {
             flag2 = 0;
         } else {
             combinesChars = combinesChars + token;
-            this->outputOueue.pop();
+            if (outputOueue.size() > 0) {
+                this->outputOueue.pop();
+            }
             if (this->outputOueue.size() == 0) {
                 flag2 = 0;
                 continue;
@@ -520,6 +566,7 @@ void Interpreter::makeExpressionVar(char token) {
     double d = atof(combinesChars.c_str());
     this->expressionStuck.push(new Value(d));
 }
+
 void Interpreter::makeExpressionVariable(char token) {
     char token2 = token;
     string combinesChars;
@@ -562,12 +609,12 @@ void Interpreter::makeExpressionVariable(char token) {
         this->expressionStuck.push(new Variable(combinesChars, map1[combinesChars]));
     } else {
         // didnt find the name
-        throw "variable wasn't initialized";
+        cout << "variable wasn't initialized- shunting yard" << endl;
     }
 }
-bool Interpreter::isNameValid(string s)
-{
-    for(unsigned int i = 0; i < s.length(); i++) {
+
+bool Interpreter::isNameValid(string s) {
+    for (unsigned int i = 0; i < s.length(); i++) {
         if (i == 0) {
             if (isalpha(s[i]) == 0) {
                 // checking that the first char is a letter
@@ -580,25 +627,26 @@ bool Interpreter::isNameValid(string s)
     }
     return true;
 }
-Interpreter::~Interpreter(){
+
+Interpreter::~Interpreter() {
 }
 
-double ShuntingYard::useShuntingYard(string *s, unordered_map <string, Var*>* varTable) {
+double ShuntingYard::useShuntingYard(string *s, unordered_map<string, Var *> *varTable) {
     string see = *s;
     double x;
-    Interpreter* interpret = new Interpreter();
-    Expression* ex1 = nullptr;
+    Interpreter *interpret = new Interpreter();
+    Expression *ex1 = nullptr;
     try {
         interpret->setVariables(varTable);
         ex1 = interpret->interpret(*s);
         x = ex1->calculate();
         delete ex1;
-    } catch(const char* e) {
+    } catch (const char *e) {
         if (ex1 != nullptr) {
             delete ex1;
         }
-        std::cout << "error in shunting yard" << std::endl;
+        std::cout << "error in shunting yard. " << *s << std::endl;
     }
-    delete(interpret);
+    delete (interpret);
     return x;
 }

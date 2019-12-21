@@ -23,19 +23,9 @@ OpenServerCommand::OpenServerCommand(std::unordered_map<string, Var *> *pMap, in
 
 int OpenServerCommand::dataEntryPoint(string *s) {
     //reading from client
-    char buffer[1024] = {0};
-    //int i = 0;
     while (!*offWhileServer) {
-        int valread = ::read(client_socket, buffer, 1024);
-        //cout << buffer << endl;
-        // updating the var table according to the buffer - change the value
-        //if (i == 0) {
-            //cout << "first time" << endl;
-            //updateMap(buffer, true);
-        //} else {
-            updateMap(buffer, false);
-        //}
-      //  i++;
+        string buffer = readOneChar();
+        updateMap(buffer, false);
     }
     return 0;
 }
@@ -43,11 +33,6 @@ int OpenServerCommand::dataEntryPoint(string *s) {
 void OpenServerCommand::initializeServerMap(string *s) {
     //reading one char at a time
     string buffer = readOneChar();
-
-    //char buffer[1024] = {0};
-    //int valread = ::read(client_socket, buffer, 1024);
-   // cout << buffer << endl;
-    // updating the var table according to the buffer
     cout << "first time" << endl;
     updateMap(buffer, true);
 }
@@ -418,6 +403,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
             return "";
     }
 }
+
 void OpenServerCommand::notFirstRead(string sub, int i) {
     string sim;
     sim = initializeVars(sub, i, false);
@@ -426,7 +412,7 @@ void OpenServerCommand::notFirstRead(string sub, int i) {
     if (pos == this->varTable->end()) {
         // check if it's assignment line (rpm = 0)
         /*** error ***/
-        cout<< "error - problem in open server command: not first read"<< endl;
+        cout << "error - problem in open server command: not first read" << endl;
     } else {
         pos->second->setValue(stof(sub));
     }
@@ -438,7 +424,7 @@ string OpenServerCommand::readOneChar() {
     int flag = 1;
     while (flag) {
         int valread = ::read(client_socket, buffer, 1);
-        if (buffer != "\n") {
+        if (buffer[0] != '\n') {
             line = line + buffer;
         } else {
             flag = 0;
