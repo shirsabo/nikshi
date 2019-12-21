@@ -21,6 +21,7 @@ int AssignCommand::execute(std::__cxx11::string * s) {
     } else{
         double val = ShuntingYard::useShuntingYard(s, this->varTable);
         pos->second->setValue(val);
+        Var *check2 = pos->second;
         // checking if there is an arrow out and we need to inform the server
         if (pos->second->getArrow() == "OUT") {
             // updating the client server

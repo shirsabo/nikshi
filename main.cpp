@@ -54,6 +54,9 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
     int index = 0;
     thread t3;
     thread t4;
+    Command *c, *m;
+    OpenServerCommand *c1;
+    ConnectCommand *m2;
     // executing the first two lines
     for (int i = 0; i < 2; i++) {
         auto pos = mp->find(array[index]);
@@ -62,8 +65,8 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
             cout << "error\n";
         } else {
             if (i == 0) {
-                Command *c = pos->second;
-                OpenServerCommand c1 = *((OpenServerCommand *) c);
+                c = pos->second;
+                c1 = ((OpenServerCommand *) c);
                 // waiting for the server to accept the call
                 thread t1(&OpenServerCommand::acceptence, ref((c1)), &(array[index + 1]));
                 t1.join();
@@ -75,11 +78,11 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
                 index += 2;
                 continue;
             }
-            Command *c = pos->second;
+            m = pos->second;
             // opening the clint server
-            ConnectCommand c2 = *((ConnectCommand *) c);
+            m2 = ((ConnectCommand *) m);
             string check = array[index +1];
-            t4 = thread(&ConnectCommand::connection, ref(c2), &array[index + 1]);
+            t4 = thread(&ConnectCommand::connection, ref(m2), &array[index + 1]);
         }
     }
     while (index < size) {
