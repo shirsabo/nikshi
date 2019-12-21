@@ -46,31 +46,42 @@ int main(int argsc, char *argv[]) {
     // creating a map of the commands
     unordered_map<string, Command *> mp;
     createMap(&mp, varTable, server_map, offWhileServer);
-    for (int i = 0; i < sizeAr; ++i) {
-        cout << array[i] << endl;
-    }
     parser(&mp, array, sizeAr, offWhileServer);
     return 0;
 }
 
 void parser(unordered_map<string, Command *> *mp, string *array, int size, int *offWhileServer) {
     int index = 0;
-
+    thread t3;
+    thread t4;
     // executing the first two lines
-    auto pos = mp->find(array[index]);
-    if (pos == mp->end()) {
-        // check if it's assignment line (rpm = 0)
-        /*** error ***/
+    for (int i = 0; i < 2; i++) {
+        auto pos = mp->find(array[index]);
+        if (pos == mp->end()) {
+            // check if it's assignment line (rpm = 0)
+            cout << "error\n";
+        } else {
+            if (i == 0) {
+                Command *c = pos->second;
+                OpenServerCommand c1 = *((OpenServerCommand *) c);
+                // waiting for the server to accept the call
+                thread t1(&OpenServerCommand::acceptence, ref((c1)), &(array[index + 1]));
+                t1.join();
+                thread t2(&OpenServerCommand::initializeServerMap, ref((c1)), &(array[index + 1]));
+                t2.join();
+                // starting to get information from the server
+                t3 = thread(&OpenServerCommand::dataEntryPoint, ref((c1)), &(array[index + 1]));
+                cout<<"i am listening...."<<endl;
+                index += 2;
+                continue;
+            }
+            Command *c = pos->second;
+            // opening the clint server
+            ConnectCommand c2 = *((ConnectCommand *) c);
+            string check = array[index +1];
+            t4 = thread(&ConnectCommand::connection, ref(c2), &array[index + 1]);
+        }
     }
-    Command *c = pos->second;
-    OpenServerCommand c1 = *((OpenServerCommand *) c);
-    // waiting for the server to accept the call
-    thread t1(&OpenServerCommand::acceptence, ref((c1)), &(array[index + 1]));
-    t1.join();
-    thread t2(&OpenServerCommand::initializeServerMap, ref((c1)), &(array[index + 1]));
-    t2.join();
-    // strting to get information from the server
-    thread t3(&OpenServerCommand::dataEntryPoint, ref((c1)), &(array[index + 1]));
     while (index < size) {
         auto pos = mp->find(array[index]);
         if (pos == mp->end()) {
@@ -86,6 +97,7 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
     }
     // ending the loop in the open server command
     *offWhileServer = 1;
+    t4.join();
     t3.join();
 }
 
@@ -96,7 +108,7 @@ void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var
     DefineVarCommand *varCommand = new DefineVarCommand(varTable, server_map);
     PrintCommand *print = new PrintCommand(varTable);
     SleepCommand *sleep = new SleepCommand();
-    AssignCommand *assign = new AssignCommand(varTable);
+    AssignCommand *assign = new AssignCommand(varTable, connect);
     //must be the last one we enter because it has a map of the commands too
     ConditionParser *I = new IfCommand(pMap, varTable);
     ConditionParser *L = new LoopCommand(pMap, varTable);
@@ -144,7 +156,7 @@ string *lexer(char *argv[]) {
                 string sub2 = line.substr(pos - prev + 1, line.length());
                 if (sub1 == "while" || sub1 == "if") {
                     editConditionParser(sub2, &deque, &sizeDeque);
-                    prev=0;
+                    prev = 0;
                     line = "";
                     break;
                 }

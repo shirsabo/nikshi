@@ -21,5 +21,7 @@ public:
     void setValue(float val);
 
     string getArrow();
+
+    string getSim();
 };
 #endif //EX3_VAR_H

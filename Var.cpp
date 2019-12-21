@@ -31,3 +31,7 @@ void Var::setValue(float val) {
 string Var::getArrow(){
     return this->inout;
 }
+
+string Var::getSim(){
+    return this->sim;
+}

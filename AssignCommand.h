@@ -9,12 +9,14 @@
 #include "Var.h"
 #include "unordered_map"
 #include "Command.h"
+#include "ConnectCommand.h"
 
 class AssignCommand: public Command {
 private:
     unordered_map<string, Var *> *varTable;
+    ConnectCommand *connectCommand;
 public:
-    AssignCommand(unordered_map<string, Var *> *varTableIn);
+    AssignCommand(unordered_map<string, Var *> *varTable, ConnectCommand *connectIn);
 
     int execute(string *s);
 };

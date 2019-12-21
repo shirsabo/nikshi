@@ -39,11 +39,11 @@ void OpenServerCommand::initializeServerMap(string *s) {
 
 void OpenServerCommand::updateMap(string buffer, bool firstTime) {
     int i = 1;
-    string s = buffer;
+    string s = buffer, sub;
     size_t prev = 0, pos;
     for (; (pos = s.find_first_of(",", prev)) != std::string::npos; i += 1) {
         if (pos > prev) {
-            string sub = s.substr(prev, pos - prev);
+            sub = s.substr(prev, pos - prev);
             if (firstTime) {
                 // creating the server map by creating new vars
                 string s = initializeVars(sub, i, true);
@@ -63,6 +63,10 @@ void OpenServerCommand::updateMap(string buffer, bool firstTime) {
         if (i == 36) {
             i = 0;
         }
+    }
+    if (firstTime) {
+        // i = last
+        initializeVars(sub, i, true);
     }
 }
 
@@ -408,6 +412,10 @@ void OpenServerCommand::notFirstRead(string sub, int i) {
     string sim;
     sim = initializeVars(sub, i, false);
     // finding the var from the server map
+    if(this->varTable==NULL)
+    {
+        std::cout<<"erorrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"<<endl;
+    }
     auto pos = this->varTable->find(sim);
     if (pos == this->varTable->end()) {
         // check if it's assignment line (rpm = 0)
