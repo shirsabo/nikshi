@@ -25,6 +25,7 @@ void ConditionParser::parser(unordered_map<string, Command *> *mp, string *array
 }
 
 bool ConditionParser::checkCondition(string *original) {
+
     double y = 0, x = 0;
     string s = *original;
     /*
@@ -42,7 +43,7 @@ bool ConditionParser::checkCondition(string *original) {
     }
      */
     // calculating using the shunting yard
-    x = useShuntingYard(original);
+    x = ShuntingYard::useShuntingYard(original, this->varTable);
     // moving to the sign
     string *sign = original + 1;
     string check = *sign;
@@ -50,7 +51,7 @@ bool ConditionParser::checkCondition(string *original) {
     original = original + 2;
     string num = *original;
     std::string::size_type sz = 0;
-    y = useShuntingYard(original);
+    y = ShuntingYard::useShuntingYard(original, this->varTable);
     if (*sign == "==") {
         if (x == y) {
             return true;
@@ -118,16 +119,17 @@ string shir = *(s+4);
     }
     // moving after the {
     s += 1;
-    string nikol = *s;
     original = s;
+    string check;
     while (*s != "}") {
-        string check = *s;
+        check = *s;
         if (*s == ""){
             continue;
         }
         sizeUntilEnd += 1;
         sizeLoopCommand += 1;
         s += 1;
+        check = *s;
     }
 // if the condition is false - returning to the main without doing anything
     if (!condition) {
@@ -144,7 +146,7 @@ string shir = *(s+4);
     }
      */
 }
-
+/*
 double ConditionParser::useShuntingYard(string *s) {
     string see = *s;
     double x;
@@ -164,7 +166,7 @@ double ConditionParser::useShuntingYard(string *s) {
     delete(interpret);
     return x;
 }
-
+*/
 bool ConditionParser::getCondition() {
     return condition;
 }

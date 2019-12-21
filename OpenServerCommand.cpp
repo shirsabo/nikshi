@@ -41,25 +41,24 @@ int OpenServerCommand::dataEntryPoint(string *s) {
 }
 
 void OpenServerCommand::initializeServerMap(string *s) {
-    //reading from client
-    char buffer[1024] = {0};
-    int valread = ::read(client_socket, buffer, 1024);
+    //reading one char at a time
+    string buffer = readOneChar();
+
+    //char buffer[1024] = {0};
+    //int valread = ::read(client_socket, buffer, 1024);
    // cout << buffer << endl;
     // updating the var table according to the buffer
     cout << "first time" << endl;
     updateMap(buffer, true);
 }
 
-void OpenServerCommand::updateMap(char buffer[1024], bool firstTime) {
+void OpenServerCommand::updateMap(string buffer, bool firstTime) {
     int i = 1;
     string s = buffer;
     size_t prev = 0, pos;
     for (; (pos = s.find_first_of(",", prev)) != std::string::npos; i += 1) {
         if (pos > prev) {
             string sub = s.substr(prev, pos - prev);
-            if (sub == "0.000000\n0.000000") {
-                sub = "0.000000";
-            }
             if (firstTime) {
                 // creating the server map by creating new vars
                 string s = initializeVars(sub, i, true);
@@ -432,3 +431,19 @@ void OpenServerCommand::notFirstRead(string sub, int i) {
         pos->second->setValue(stof(sub));
     }
 }
+
+string OpenServerCommand::readOneChar() {
+    string line = "";
+    char buffer[1] = {0};
+    int flag = 1;
+    while (flag) {
+        int valread = ::read(client_socket, buffer, 1);
+        if (buffer != "\n") {
+            line = line + buffer;
+        } else {
+            flag = 0;
+        }
+    }
+    return line;
+}
+

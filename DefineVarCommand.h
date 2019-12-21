@@ -16,7 +16,8 @@ private:
     unordered_map<string, Var *> *server_map;
 public:
     DefineVarCommand(unordered_map <string, Var*>* varTable,  unordered_map<string, Var *> *server_map);
-     int execute(string*);
+
+    int execute(string *);
 
     bool checkForErrow(string *pString);
 

@@ -5,6 +5,7 @@
 #include "Command.h"
 #include <string>
 #include <stdlib.h>
+#include "ShuntingYard.h"
 
 DefineVarCommand::DefineVarCommand(unordered_map<string, Var *> *varTableIn,  unordered_map<string, Var *> *server_mapIn) {
     this->varTable = varTableIn;
@@ -25,6 +26,7 @@ int DefineVarCommand::execute(string *s) {
             this->varTable->insert({*s, newVar});
         }
         return 5;
+        /*
     } else if (checkForEqual(s) == 1) {
         // there is a '=' sign
         string *arr = seperateString(s);
@@ -51,32 +53,22 @@ int DefineVarCommand::execute(string *s) {
             }
             return 3;
         }
+         */
     } else if (checkForEqual(s) == 2) {
         string name = *s;
         string next = *(s+1);
-        if (*(s+1) == "=") {
-            if (!checkIfNumber(*(s+2))) {
-                // it's a var and we need to the get it's value
-                auto pos = varTable->find(*(s+2));
-                if (pos == varTable->end()) {
-                    // not a var or a number - error
-                    /*** error ***/
-                } else {
-                    *(s + 2)=  std::to_string(pos->second->getValue());
-                }
-            }
+            double val = ShuntingYard::useShuntingYard((s+2), this->varTable);
             // x = val
             auto pos = varTable->find(*s);
             if (pos == varTable->end()) {
                 Var *newVar = new Var(name, "", "");
-                string num = *(s + 2);
-                newVar->setValue(stof(*(s + 2)));
+                newVar->setValue(val);
                 this->varTable->insert({name, newVar});
             } else {
-                pos->second->setValue(stod(*(s + 2)));
+                pos->second->setValue(val);
             }
             return 4;
-        } else {
+        /*else {
             // x =val
             std::size_t index = (*(s + 1)).find_first_of("=", 0);
             string val = (*(s + 1)).substr(index + 1, (*(s + 1)).length());
@@ -90,6 +82,7 @@ int DefineVarCommand::execute(string *s) {
             }
             return 3;
         }
+         */
     }
 }
 

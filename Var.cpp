@@ -27,3 +27,7 @@ float Var::getValue() {
 void Var::setValue(float val) {
     this->value = val;
 }
+
+string Var::getArrow(){
+    return this->inout;
+}

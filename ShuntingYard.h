@@ -152,4 +152,9 @@ public:
     bool isNumber(string s);
     bool isNameValid(string s);
 };
+
+class ShuntingYard {
+public:
+    static double useShuntingYard(string *s, unordered_map <string, Var*>* varTable);
+};
 #endif //EX1_EX1_H

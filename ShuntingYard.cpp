@@ -545,6 +545,8 @@ void Interpreter::makeExpressionVariable(char token) {
             this->outputOueue.pop();
             if (!this->outputOueue.empty()) {
                 token = this->outputOueue.front();
+            } else {
+                flag2 = 0;
             }
         }
         if ((token == ',') || this->checkIfOperator(token)) {
@@ -579,4 +581,24 @@ bool Interpreter::isNameValid(string s)
     return true;
 }
 Interpreter::~Interpreter(){
+}
+
+double ShuntingYard::useShuntingYard(string *s, unordered_map <string, Var*>* varTable) {
+    string see = *s;
+    double x;
+    Interpreter* interpret = new Interpreter();
+    Expression* ex1 = nullptr;
+    try {
+        interpret->setVariables(varTable);
+        ex1 = interpret->interpret(*s);
+        x = ex1->calculate();
+        delete ex1;
+    } catch(const char* e) {
+        if (ex1 != nullptr) {
+            delete ex1;
+        }
+        std::cout << "error in shunting yard" << std::endl;
+    }
+    delete(interpret);
+    return x;
 }

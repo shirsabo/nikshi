@@ -22,7 +22,7 @@ public:
 
     virtual int execute(string*);
 
-    void updateMap(char buffer[1024], bool firstTime);
+    void updateMap(string buffer, bool firstTime);
 
     string initializeVars(string sub, int i, bool firstTime);
 
@@ -35,6 +35,8 @@ public:
     void clientSetter(int socket);
 
     void initializeServerMap(string *s);
+
+    string readOneChar();
 };
 
 #endif //EX3_OPENSERVERCOMMAND_H

@@ -30,7 +30,7 @@ public:
 
     int executeHelper(string *s);
 
-    double useShuntingYard(string *s);
+    //double useShuntingYard(string *s);
 
     bool getCondition();
 };

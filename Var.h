@@ -19,5 +19,7 @@ public:
     string getName();
     float getValue();
     void setValue(float val);
+
+    string getArrow();
 };
 #endif //EX3_VAR_H

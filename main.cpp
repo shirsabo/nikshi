@@ -16,6 +16,7 @@
 #include <unordered_map>
 #include <thread>
 #include "ShuntingYard.h"
+#include "AssignCommand.h"
 
 int sizeAr = 0;
 using namespace std;
@@ -42,25 +43,6 @@ int main(int argsc, char *argv[]) {
     unordered_map<string, Var *> *server_map = new unordered_map<string, Var *>;
     // creating var table
     unordered_map<string, Var *> *varTable = new unordered_map<string, Var *>;
-    /*
-    Var *va = new Var("warp", "","");
-    va->setValue(5);
-    varTable->insert({"warp", va});
-    Interpreter* interpret = new Interpreter();
-    Expression* ex1 = nullptr;
-    try {
-        interpret->setVariables(varTable);
-        ex1 = interpret->interpret("-3+warp");
-        std::cout << "1: "<< ex1->calculate() << std::endl;
-        delete ex1;
-    } catch(const char* e) {
-        if (ex1 != nullptr) {
-            delete ex1;
-        }
-        std::cout << e << std::endl;
-    }
-    delete(interpret);
-*/
     // creating a map of the commands
     unordered_map<string, Command *> mp;
     createMap(&mp, varTable, server_map, offWhileServer);
@@ -80,7 +62,6 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
         // check if it's assignment line (rpm = 0)
         /*** error ***/
     }
-/*
     Command *c = pos->second;
     OpenServerCommand c1 = *((OpenServerCommand *) c);
     // waiting for the server to accept the call
@@ -90,7 +71,6 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
     t2.join();
     // strting to get information from the server
     thread t3(&OpenServerCommand::dataEntryPoint, ref((c1)), &(array[index + 1]));
-*/
     while (index < size) {
         auto pos = mp->find(array[index]);
         if (pos == mp->end()) {
@@ -106,7 +86,7 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
     }
     // ending the loop in the open server command
     *offWhileServer = 1;
-    //t3.join();
+    t3.join();
 }
 
 void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var *> *varTable,
@@ -116,6 +96,7 @@ void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var
     DefineVarCommand *varCommand = new DefineVarCommand(varTable, server_map);
     PrintCommand *print = new PrintCommand(varTable);
     SleepCommand *sleep = new SleepCommand();
+    AssignCommand *assign = new AssignCommand(varTable);
     //must be the last one we enter because it has a map of the commands too
     ConditionParser *I = new IfCommand(pMap, varTable);
     ConditionParser *L = new LoopCommand(pMap, varTable);
@@ -127,6 +108,7 @@ void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var
     pMap->insert(pair<string, Command *>("Sleep", sleep));
     pMap->insert(pair<string, Command *>("while", L));
     pMap->insert(pair<string, Command *>("if", I));
+    pMap->insert(pair<string, Command *>("=", assign));
 }
 
 string *lexer(char *argv[]) {
@@ -180,14 +162,8 @@ string *lexer(char *argv[]) {
                     prev = 0;
                     break;
                 } else {
-                    //string sub1 = line.substr(prev, pos - prev);
-                    //deque.push_back(sub1);
-                    // deque.push_back("=");
                     string sub2 = line.substr(pos - prev + 1, line.length());
                     line = sub2;
-                    //sub2 = edit(sub2);
-                    //deque.push_back(sub2);
-                    //sizeDeque += 2;
                     prev = 0;
                     continue;
                 }
@@ -199,7 +175,7 @@ string *lexer(char *argv[]) {
         }
         // printing the {,} and the end of the line if it does'nt contain any of the checked chars
         if (((line != "" && line != ")") && (line.find_first_of(" ,(\t)", prev)) == std::string::npos)
-            || (pos = line.find_first_of("{}", prev)) != std::string::npos) {
+            || (line.find_first_of("{}", prev)) != std::string::npos) {
             deque.push_back(line);
             sizeDeque += 1;
             line = "";
@@ -244,7 +220,7 @@ void editConditionParser(string s, deque <string> *deque, int *sizeDeque) {
             afterSign = s.substr(1, s.length());
         }
         deque->push_back(sign);
-        sizeDeque += 1;
+        *sizeDeque += 1;
     }
     // removing the '{'
     if ((pos = afterSign.find_first_of("{", prev)) != std::string::npos) {
