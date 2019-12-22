@@ -16,11 +16,12 @@ int DefineVarCommand::execute(string *s) {
     string check = *s;
     if (checkForErrow(s)) {
         // there are -> / <-
-        if (Var* var_server = checkInServerMap(s + 3)) {
+        Var* var_server;
+        if (*(s+1) == "<-" && (var_server = checkInServerMap(s + 3))) {
             // the var exists in the server's map and we will point to it
             this->varTable->insert({*s, var_server});
         } else {
-            // there is an errow : ->/<-
+            // there is an errow : ->
             Var *newVar = new Var(*s, *(s + 3), *(s + 1));
             newVar->setValue(0);
             this->varTable->insert({*s, newVar});

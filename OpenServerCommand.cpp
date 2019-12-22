@@ -40,6 +40,7 @@ void OpenServerCommand::initializeServerMap(string *s) {
 void OpenServerCommand::updateMap(string buffer, bool firstTime) {
     int i = 1;
     string s = buffer, sub;
+    cout << s << endl;
     size_t prev = 0, pos;
     for (; (pos = s.find_first_of(",", prev)) != std::string::npos; i += 1) {
         if (pos > prev) {
@@ -54,19 +55,15 @@ void OpenServerCommand::updateMap(string buffer, bool firstTime) {
             string sub2 = s.substr(pos - prev + 1, s.length());
             s = sub2;
             prev = 0;
-            if (i == 36) {
-                i = 0;
-            }
             continue;
         }
         prev = pos + 1;
-        if (i == 36) {
-            i = 0;
-        }
     }
     if (firstTime) {
         // i = last
         initializeVars(sub, i, true);
+    } else {
+        notFirstRead(sub, i);
     }
 }
 
@@ -85,7 +82,7 @@ int OpenServerCommand::acceptence(string *s) {
     //we need to convert our number to a number that the network understands.
     //the actual bind command
     if (bind(socketfd, (struct sockaddr *) &address, sizeof(address)) == -1) {
-        throw "Bad connedction\n";
+        cout<< "Bad connedction\n";
     }
     //making socket listen to the port
     if (listen(socketfd, 5) == -1) { //can also set to SOMAXCON (max connections)
@@ -120,7 +117,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/airspeed-indicator/indicated-speed-kt\"", varTemp});
             }
             return "\"/instrumentation/airspeed-indicator/indicated-speed-kt\"";
-        case 2:
+        case 5:
             //
             if (firstTime) {
                 varTemp = new Var("altimeter_indicated-altitude-ft",
@@ -129,7 +126,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/altimeter/indicated-altitude-ft\"", varTemp});
             }
             return "\"/instrumentation/altimeter/indicated-altitude-ft\"";
-        case 3:
+        case 6:
             //
             if (firstTime) {
                 varTemp = new Var("altimeter_pressure-alt-ft",
@@ -138,7 +135,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"//instrumentation/altimeter/pressure-alt-ft\"", varTemp});
             }
             return "\"//instrumentation/altimeter/pressure-alt-ft\"";
-        case 4:
+        case 8:
             if (firstTime) {
                 varTemp = new Var("attitude-indicator_indicated-roll-deg",
                                   "/instrumentation/attitude-indicator/indicated-roll-deg", "<-");
@@ -146,7 +143,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/attitude-indicator/indicated-roll-deg\"", varTemp});
             }
             return "\"/instrumentation/attitude-indicator/indicated-roll-deg\"";
-        case 5:
+        case 12:
             if (firstTime) {
                 varTemp = new Var("encoder_pressure-alt-ft",
                                   "/instrumentation/encoder/pressure-alt-ft", "<-");
@@ -154,7 +151,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/encoder/pressure-alt-ft\"", varTemp});
             }
             return "\"/instrumentation/encoder/pressure-alt-ft\"";
-        case 6:
+        case 10:
             if (firstTime) {
                 varTemp = new Var("attitude-indicator_internal-roll-deg",
                                   "/instrumentation/attitude-indicator/internal-roll-deg", "<-");
@@ -162,7 +159,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/attitude-indicator/internal-roll-deg\"", varTemp});
             }
             return "\"/instrumentation/attitude-indicator/internal-roll-deg\"";
-        case 7://
+        case 2://
             if (firstTime) {
                 varTemp = new Var("time_warp",
                                   "/sim/time/warp", "<-");
@@ -170,7 +167,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/sim/time/warp\"", varTemp});
             }
             return "\"/sim/time/warp\"";
-        case 8://
+        case 3://
             if (firstTime) {
                 varTemp = new Var("switches_magnetos",
                                   "/controls/switches/magnetos", "<-");
@@ -178,7 +175,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/controls/switches/magnetos\"", varTemp});
             }
             return "\"/controls/switches/magnetos\"";
-        case 9:
+        case 4:
             if (firstTime) {
                 varTemp = new Var("heading-indicator_offset-deg",
                                   "/instrumentation/heading-indicator/offset-deg", "<-");
@@ -186,7 +183,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/heading-indicator/offset-deg\"", varTemp});
             }
             return "\"/instrumentation/heading-indicator/offset-deg\"";
-        case 10:
+        case 11:
             if (firstTime) {
                 varTemp = new Var("encoder_indicated-altitude-ft",
                                   "/instrumentation/encoder/indicated-altitude-ft", "<-");
@@ -194,7 +191,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/encoder/indicated-altitude-ft\"", varTemp});
             }
             return "\"/instrumentation/encoder/indicated-altitude-ft\"";
-        case 11:
+        case 13:
             if (firstTime) {
                 varTemp = new Var("gps_indicated-altitude-ft",
                                   "/instrumentation/gps/indicated-altitude-ft", "<-");
@@ -202,7 +199,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/gps/indicated-altitude-ft\"", varTemp});
             }
             return "\"/instrumentation/gps/indicated-altitude-ft\"";
-        case 12:
+        case 14:
             if (firstTime) {
                 varTemp = new Var("gps_indicated-ground-speed-kt",
                                   "/instrumentation/gps/indicated-ground-speed-kt", "<-");
@@ -210,7 +207,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/gps/indicated-ground-speed-kt\"", varTemp});
             }
             return "\"/instrumentation/gps/indicated-ground-speed-kt\"";
-        case 13:
+        case 15:
             if (firstTime) {
                 varTemp = new Var("gps_indicated-vertical-speed",
                                   "/instrumentation/gps/indicated-vertical-speed", "<-");
@@ -218,7 +215,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/gps/indicated-vertical-speed\"", varTemp});
             }
             return "\"/instrumentation/gps/indicated-vertical-speed\"";
-        case 14:
+        case 16:
             if (firstTime) {
                 varTemp = new Var("indicated-heading-deg",
                                   "/instrumentation/heading-indicator/indicated-heading-deg", "<-");
@@ -226,7 +223,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/heading-indicator/indicated-heading-deg\"", varTemp});
             }
             return "\"/instrumentation/heading-indicator/indicated-heading-deg\"";
-        case 15:
+        case 17:
             if (firstTime) {
                 varTemp = new Var("magnetic-compass_indicated-heading-deg",
                                   "/instrumentation/magnetic-compass/indicated-heading-deg", "<-");
@@ -234,7 +231,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/magnetic-compass/indicated-heading-deg\"", varTemp});
             }
             return "\"/instrumentation/magnetic-compass/indicated-heading-deg\"";
-        case 16:
+        case 18:
             if (firstTime) {
                 varTemp = new Var("slip-skid-ball_indicated-slip-skid",
                                   "/instrumentation/slip-skid-ball/indicated-slip-skid", "<-");
@@ -242,7 +239,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/slip-skid-ball/indicated-slip-skid\"", varTemp});
             }
             return "\"/instrumentation/slip-skid-ball/indicated-slip-skid\"";
-        case 17:
+        case 19:
             if (firstTime) {
                 varTemp = new Var("turn-indicator_indicated-turn-rate",
                                   "/instrumentation/turn-indicator/indicated-turn-rate", "<-");
@@ -250,7 +247,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/turn-indicator/indicated-turn-rate\"", varTemp});
             }
             return "\"/instrumentation/turn-indicator/indicated-turn-rate\"";
-        case 18:
+        case 20:
             if (firstTime) {
                 varTemp = new Var("vertical-speed-indicator_indicated-speed-fpm",
                                   "/instrumentation/vertical-speed-indicator/indicated-speed-fpm", "<-");
@@ -258,7 +255,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/vertical-speed-indicator/indicated-speed-fpm\"", varTemp});
             }
             return "\"/instrumentation/vertical-speed-indicator/indicated-speed-fpm\"";
-        case 19:
+        case 21:
             if (firstTime) {
                 varTemp = new Var("flight_aileron",
                                   "/controls/flight/aileron", "<-");
@@ -266,7 +263,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/controls/flight/aileron\"", varTemp});
             }
             return "\"/controls/flight/aileron\"";
-        case 20:
+        case 22:
             if (firstTime) {
                 varTemp = new Var("flight_elevator",
                                   "/controls/flight/elevator", "<-");
@@ -274,7 +271,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/controls/flight/elevator\"", varTemp});
             }
             return "\"/controls/flight/elevator\"";
-        case 21:
+        case 23:
             if (firstTime) {
                 varTemp = new Var("flight_rudder",
                                   "/controls/flight/rudder", "<-");
@@ -282,7 +279,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/controls/flight/rudder\"", varTemp});
             }
             return "\"/controls/flight/rudder\"";
-        case 22:
+        case 24:
             if (firstTime) {
                 varTemp = new Var("flight_flaps",
                                   "/controls/flight/flaps", "<-");
@@ -290,7 +287,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/controls/flight/flaps\"", varTemp});
             }
             return "\"/controls/flight/flaps\"";
-        case 23:
+        case 25:
             if (firstTime) {
                 varTemp = new Var("engine_throttle",
                                   "/controls/engines/engine/throttle", "<-");
@@ -298,7 +295,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/controls/engines/engine/throttle\"", varTemp});
             }
             return "\"/controls/engines/engine/throttle\"";
-        case 24:
+        case 26:
             if (firstTime) {
                 varTemp = new Var("current-engine_throttle",
                                   "/controls/engines/current-engine/throttle", "<-");
@@ -306,7 +303,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/controls/engines/current-engine/throttle\"", varTemp});
             }
             return "\"/controls/engines/current-engine/throttle\"";
-        case 25:
+        case 27:
             if (firstTime) {
                 varTemp = new Var("switches_master-avionicse",
                                   "/controls/switches/master-avionics", "<-");
@@ -314,7 +311,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/controls/switches/master-avionics\"", varTemp});
             }
             return "\"/controls/switches/master-avionics\"";
-        case 26:
+        case 28:
             if (firstTime) {
                 varTemp = new Var("switches_starter",
                                   "/controls/switches/starter", "<-");
@@ -322,7 +319,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/controls/switches/starter\"", varTemp});
             }
             return "\"/controls/switches/starter\"";
-        case 27:
+        case 29:
             if (firstTime) {
                 varTemp = new Var("active-engine_auto-start",
                                   "/engines/active-engine/auto-start", "<-");
@@ -330,7 +327,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/engines/active-engine/auto-start\"", varTemp});
             }
             return "\"/engines/active-engine/auto-start\"";
-        case 28:
+        case 30:
             if (firstTime) {
                 varTemp = new Var("flight_speedbrake",
                                   "/controls/flight/speedbrake", "<-");
@@ -338,7 +335,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/controls/flight/speedbrake\"", varTemp});
             }
             return "\"/controls/flight/speedbrake\"";
-        case 29:
+        case 31:
             if (firstTime) {
                 varTemp = new Var("c172p_brake-parking",
                                   "/sim/model/c172p/brake-parking", "<-");
@@ -346,7 +343,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/sim/model/c172p/brake-parking\"", varTemp});
             }
             return "\"/sim/model/c172p/brake-parking\"";
-        case 30:
+        case 32:
             if (firstTime) {
                 varTemp = new Var("engine_primer",
                                   "/controls/engines/engine/primer", "<-");
@@ -354,7 +351,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/controls/engines/engine/primer\"", varTemp});
             }
             return "\"/controls/engines/engine/primer\"";
-        case 31:
+        case 33:
             if (firstTime) {
                 varTemp = new Var("current-engine_mixture",
                                   "/controls/engines/current-engine/mixture", "<-");
@@ -362,7 +359,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/controls/engines/current-engine/mixture\"", varTemp});
             }
             return "\"/controls/engines/current-engine/mixture\"";
-        case 32:
+        case 34:
             if (firstTime) {
                 varTemp = new Var("switches_master-bat",
                                   "/controls/switches/master-bat", "<-");
@@ -370,7 +367,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/controls/switches/master-bat\"", varTemp});
             }
             return "\"/controls/switches/master-bat\"";
-        case 33:
+        case 35:
             if (firstTime) {
                 varTemp = new Var("switches_master-alt",
                                   "/controls/switches/master-alt", "<-");
@@ -378,7 +375,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/controls/switches/master-alt\"", varTemp});
             }
             return "\"/controls/switches/master-alt\"";
-        case 34:
+        case 36:
             if (firstTime) {
                 varTemp = new Var("engine_rpm",
                                   "/engines/engine/rpm", "<-");
@@ -386,7 +383,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/engines/engine/rpm\"", varTemp});
             }
             return "\"/engines/engine/rpm\"";
-        case 35:
+        case 7:
             if (firstTime) {
                 varTemp = new Var("attitude-indicator_indicated-pitch-deg",
                                   "/instrumentation/attitude-indicator/indicated-pitch-deg", "<-");
@@ -394,7 +391,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/attitude-indicator/indicated-pitch-deg\"", varTemp});
             }
             return "\"/instrumentation/attitude-indicator/indicated-pitch-deg\"";
-        case 36:
+        case 9:
             if (firstTime) {
                 cout << "last assign openServerCommand" << endl;
                 varTemp = new Var("attitude-indicator_internal-pitch-deg",
@@ -410,11 +407,13 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
 
 void OpenServerCommand::notFirstRead(string sub, int i) {
     string sim;
+    if (i == 36) {
+        cout<<"rpm-------------------------------------------------------------"<<endl;
+    }
     sim = initializeVars(sub, i, false);
     // finding the var from the server map
-    if(this->varTable==NULL)
-    {
-        std::cout<<"erorrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"<<endl;
+    if (this->varTable == NULL) {
+        std::cout << "erorrrrrrrrrrrrrrrrrrrrrrrrrrrrrr" << endl;
     }
     auto pos = this->varTable->find(sim);
     if (pos == this->varTable->end()) {
@@ -423,6 +422,7 @@ void OpenServerCommand::notFirstRead(string sub, int i) {
         cout << "error - problem in open server command: not first read" << endl;
     } else {
         pos->second->setValue(stof(sub));
+        cout << "changing the server map: "+ pos->first+ " " + sub<< endl;
     }
 }
 

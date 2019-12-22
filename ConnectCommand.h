@@ -20,6 +20,8 @@ public:
     void clientSetter(int socket);
 
     void changeValue(string sim, double value);
+
+    string editSim(string *sim);
 };
 
 #endif //EX3_EX3_CONNECTCOMMAND_H
