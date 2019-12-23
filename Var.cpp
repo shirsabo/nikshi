@@ -26,6 +26,9 @@ float Var::getValue() {
 
 void Var::setValue(float val) {
     this->value = val;
+    if (this->getName() == "engine_rpm" && val > 0) {
+        cout << "hi";
+    }
 }
 
 string Var::getArrow(){

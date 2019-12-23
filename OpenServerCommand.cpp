@@ -38,6 +38,7 @@ void OpenServerCommand::initializeServerMap(string *s) {
 }
 
 void OpenServerCommand::updateMap(string buffer, bool firstTime) {
+    //buffer = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,32,33,34,35,36";
     int i = 1;
     string s = buffer, sub;
     cout << s << endl;
@@ -61,9 +62,12 @@ void OpenServerCommand::updateMap(string buffer, bool firstTime) {
     }
     if (firstTime) {
         // i = last
-        initializeVars(sub, i, true);
+        initializeVars(s, 36, true);
     } else {
-        notFirstRead(sub, i);
+        if (s != "0.000000") {
+            cout<<"now";
+        }
+        notFirstRead(s, 36);
     }
 }
 
@@ -422,7 +426,7 @@ void OpenServerCommand::notFirstRead(string sub, int i) {
         cout << "error - problem in open server command: not first read" << endl;
     } else {
         pos->second->setValue(stof(sub));
-        cout << "changing the server map: "+ pos->first+ " " + sub<< endl;
+        //cout << "changing the server map: "+ pos->first+ " " + sub<< endl;
     }
 }
 
