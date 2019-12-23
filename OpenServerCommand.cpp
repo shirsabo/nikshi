@@ -64,9 +64,6 @@ void OpenServerCommand::updateMap(string buffer, bool firstTime) {
         // i = last
         initializeVars(s, 36, true);
     } else {
-        if (s != "0.000000") {
-            cout<<"now";
-        }
         notFirstRead(s, 36);
     }
 }

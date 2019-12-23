@@ -14,7 +14,7 @@ void ConditionParser::parser(unordered_map<string, Command *> *mp, string *array
         auto pos = mp->find(array[index]);
         if (pos == mp->end()) {
             //handle the error
-            //throw "bad input";
+            index += 1;
         } else {
             Command *c = pos->second;
             string check1 = array[index];
