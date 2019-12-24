@@ -22,6 +22,8 @@ public:
     void changeValue(string sim, double value);
 
     string editSim(string *sim);
+
+    virtual ~ConnectCommand();
 };
 
 #endif //EX3_EX3_CONNECTCOMMAND_H

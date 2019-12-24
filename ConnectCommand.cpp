@@ -9,6 +9,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <cstring>
+#include <unistd.h>
 
 using namespace std;
 
@@ -62,4 +63,7 @@ string ConnectCommand::editSim(string *sim) {
     *sim = sim->substr(2, (sim->length() - 3));
     string check = *sim;
     return *sim;
+}
+ConnectCommand:: ~ConnectCommand() {
+    close(this->client_socket);
 }

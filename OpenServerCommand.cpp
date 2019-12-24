@@ -420,7 +420,6 @@ void OpenServerCommand::notFirstRead(string sub, int i) {
         pos->second->setValue(stof(sub));
     }
 }
-
 string OpenServerCommand::readOneChar() {
     string line = "";
     char buffer[1] = {0};

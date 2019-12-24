@@ -25,7 +25,7 @@ void ConditionParser::parser(unordered_map<string, Command *> *mp, string *array
 
 bool ConditionParser::checkCondition(string *original) {
 
-    double y = 0, x = 0;
+    float y = 0, x = 0;
     // calculating using the shunting yard
     x = ShuntingYard::useShuntingYard(original, this->varTable);
     // moving to the sign

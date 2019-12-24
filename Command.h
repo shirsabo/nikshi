@@ -13,6 +13,6 @@ class Command {
 
 public:
      virtual int execute(string *) = 0;
-     ~Command() {}
+     virtual ~Command() {}
 };
 #endif //EX3_COMMAND_H

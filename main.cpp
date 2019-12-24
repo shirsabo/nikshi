@@ -38,6 +38,9 @@ string* buildArr(int sizeDeque, deque<string> deque);
 
 void iterateParser(int size, unordered_map<string, Command *> *mp, int *index, string *array);
 
+void deleteProject(unordered_map<string, Var *> *serverMap, unordered_map<string, Var *> *varTable,
+        unordered_map<string, Command *> *mp);
+
 int main(int argsc, char *argv[]) {
     int *offWhileServer;
     int off = 0;
@@ -51,7 +54,13 @@ int main(int argsc, char *argv[]) {
     unordered_map<string, Command *> mp;
     createMap(&mp, varTable, server_map, offWhileServer);
     parser(&mp, array, sizeAr, offWhileServer);
+    deleteProject(server_map, varTable, &mp);
     return 0;
+}
+
+void deleteProject(unordered_map<string, Var *> *serverMap, unordered_map<string, Var *> *varTable,
+    unordered_map<string, Command *> *mp) {
+
 }
 
 void parser(unordered_map<string, Command *> *mp, string *array, int size, int *offWhileServer) {
