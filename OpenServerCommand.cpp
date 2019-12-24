@@ -8,6 +8,7 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <deque>
+#include "ShuntingYard.h"
 
 using namespace std;
 
@@ -32,14 +33,12 @@ int OpenServerCommand::dataEntryPoint(string *s) {
 void OpenServerCommand::initializeServerMap(string *s) {
     //reading one char at a time
     string buffer = readOneChar();
-    cout << "first time" << endl;
     updateMap(buffer, true);
 }
 
 void OpenServerCommand::updateMap(string buffer, bool firstTime) {
     int i = 1;
     string s = buffer, sub;
-    cout << s << endl;
     size_t prev = 0, pos;
     for (; (pos = s.find_first_of(",", prev)) != std::string::npos; i += 1) {
         if (pos > prev) {
@@ -77,7 +76,9 @@ int OpenServerCommand::acceptence(string *s) {
     sockaddr_in address; //in means IP4
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY; //give me any IP allocated for my machine
-    address.sin_port = htons(stoi(*s));
+    // calculating the number entered
+    float port = ShuntingYard::useShuntingYard(s, this->varTable);
+    address.sin_port = htons((int)port);
     //we need to convert our number to a number that the network understands.
     //the actual bind command
     if (bind(socketfd, (struct sockaddr *) &address, sizeof(address)) == -1) {
@@ -86,8 +87,6 @@ int OpenServerCommand::acceptence(string *s) {
     //making socket listen to the port
     if (listen(socketfd, 5) == -1) { //can also set to SOMAXCON (max connections)
         throw "Bad connedction\n";
-    } else {
-        std::cout << "Server is now listening ..." << std::endl;
     }
 //waiting until connection
     // accepting a client
@@ -109,7 +108,6 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
     switch (i) {
         case 1://
             if (firstTime) {
-                cout << "first assign openServerCommand" << endl;
                 varTemp = new Var("airspeed-indicator_indicated-speed-kt",
                                   "/instrumentation/airspeed-indicator/indicated-speed-kt", "<-");
                 varTemp->setValue(stof(sub));
@@ -392,7 +390,6 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
             return "\"/instrumentation/attitude-indicator/indicated-pitch-deg\"";
         case 9:
             if (firstTime) {
-                cout << "last assign openServerCommand" << endl;
                 varTemp = new Var("attitude-indicator_internal-pitch-deg",
                                   "/instrumentation/attitude-indicator/internal-pitch-deg", "<-");
                 varTemp->setValue(stof(sub));
@@ -414,7 +411,6 @@ void OpenServerCommand::notFirstRead(string sub, int i) {
     auto pos = this->varTable->find(sim);
     if (pos == this->varTable->end()) {
         // check if it's assignment line (rpm = 0)
-        /*** error ***/
         cout << "error - problem in open server command: not first read" << endl;
     } else {
         pos->second->setValue(stof(sub));

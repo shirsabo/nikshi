@@ -1,4 +1,5 @@
 #include "PrintCommand.h"
+#include "ShuntingYard.h"
 #include <string>
 #include <iostream>
 #include <stdio.h>
@@ -15,15 +16,8 @@ int PrintCommand::execute(std::__cxx11::string *print) {
     string s = *print;
     // checking if it's a string or a variable
     if ((s).find("\"") == string::npos) {
-        // finding the value of the veriable
-        auto find = varTable->find(s);
-        if (find == varTable->end()) {
-            //handle the error
-            //throw "bad input";
-        } else {
-            int val = find->second->getValue();
-            printf ("%d\n", val);
-        }
+        float calc = ShuntingYard::useShuntingYard(print, this->varTable);
+        printf ("%f\n", calc);
         return index;
     }
     //printing the first word

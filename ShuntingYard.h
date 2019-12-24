@@ -155,6 +155,6 @@ public:
 
 class ShuntingYard {
 public:
-    static double useShuntingYard(string *s, unordered_map <string, Var*>* varTable);
+    static float useShuntingYard(string *s, unordered_map <string, Var*>* varTable);
 };
 #endif //EX1_EX1_H

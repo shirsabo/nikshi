@@ -41,6 +41,8 @@ void iterateParser(int size, unordered_map<string, Command *> *mp, int *index, s
 void deleteProject(unordered_map<string, Var *> *serverMap, unordered_map<string, Var *> *varTable,
         unordered_map<string, Command *> *mp);
 
+void enterLine(char token, deque<string> *deque, size_t pos, size_t *prev, string line, int *sizeDeque);
+
 int main(int argsc, char *argv[]) {
     int *offWhileServer;
     int off = 0;
@@ -75,7 +77,7 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
         auto pos = mp->find(array[index]);
         if (pos == mp->end()) {
             // check if it's assignment line (rpm = 0)
-            cout << "error\n";
+            cout << "error in parser\n";
         } else {
             if (i == 0) {
                 c = pos->second;
@@ -87,7 +89,6 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
                 t2.join();
                 // starting to get information from the server
                 t3 = thread(&OpenServerCommand::dataEntryPoint, ref((c1)), &(array[index + 1]));
-                cout<<"i am listening...."<<endl;
                 index += 2;
                 continue;
             }
@@ -96,13 +97,14 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
             m2 = ((ConnectCommand *) m);
             string check = array[index +1];
             t4 = thread(&ConnectCommand::connection, ref(m2), &array[index + 1]);
+            t4.join();
         }
     }
     // iterating over the array
     iterateParser(size, mp, &index, array);
     // ending the loop in the open server command
     *offWhileServer = 1;
-    t4.join();
+    //t4.join();
     t3.join();
 }
 
@@ -124,10 +126,10 @@ void iterateParser(int size, unordered_map<string, Command *> *mp, int *index, s
 void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var *> *varTable,
                unordered_map<string, Var *> *server_map, int *offWhileServer) {
     OpenServerCommand *openCommand = new OpenServerCommand(server_map, offWhileServer);
-    ConnectCommand *connect = new ConnectCommand;
+    ConnectCommand *connect = new ConnectCommand(varTable);
     DefineVarCommand *varCommand = new DefineVarCommand(varTable, server_map);
     PrintCommand *print = new PrintCommand(varTable);
-    SleepCommand *sleep = new SleepCommand();
+    SleepCommand *sleep = new SleepCommand(varTable);
     AssignCommand *assign = new AssignCommand(varTable, connect);
     //must be the last one we enter because it has a map of the commands too
     ConditionParser *ifCommand = new IfCommand(pMap, varTable);
@@ -164,16 +166,19 @@ string *lexer(char *argv[]) {
                 // entering to the deque
                 deque.push_back(sub1);
                 sizeDeque += 1;
-                if (line[pos] == '=') {
-                    deque.push_back("=");
-                    string sub2 = line.substr(pos + 1, line.length());
-                    sub2 = edit(sub2);
-                    deque.push_back(sub2);
-                    sizeDeque += 2;
-                    prev = 0;
-                    break;
-                }
                 string sub2 = line.substr(pos - prev + 1, line.length());
+                if (line[pos] == '=') {
+                    enterLine('=', &deque, pos, &prev, line, &sizeDeque);
+                    break;
+                } else if (line[pos] == '(') {
+                    // checking that it's not a sentence in Print
+                    if ((deque.back() == "Print" && line.find("\"") != std::string::npos)) {
+                        // do nothing
+                    } else {
+                        enterLine('(', &deque, pos, &prev, line, &sizeDeque);
+                        break;
+                    }
+                }
                 if (sub1 == "while" || sub1 == "if") {
                     editConditionParser(sub2, &deque, &sizeDeque);
                     prev = 0;
@@ -186,12 +191,7 @@ string *lexer(char *argv[]) {
             }
             if (line[pos] == '=') {
                 if (pos == 0) {
-                    deque.push_back("=");
-                    string sub2 = line.substr(pos - prev + 1, line.length());
-                    sub2 = edit(sub2);
-                    deque.push_back(sub2);
-                    sizeDeque += 2;
-                    prev = 0;
+                    enterLine('=', &deque, pos, &prev, line, &sizeDeque);
                     break;
                 } else {
                     string sub2 = line.substr(pos - prev + 1, line.length());
@@ -220,6 +220,27 @@ string *lexer(char *argv[]) {
         return NULL;
     }
     return array;
+}
+
+void enterLine(char token, deque<string> *deque, size_t pos, size_t *prev, string line, int *sizeDeque) {
+    string sub2;
+    if (token == '=') {
+        deque->push_back("=");
+        *sizeDeque += 1;
+    }
+    if (pos > 0) {
+        sub2 = line.substr(pos + 1, line.length());
+    } else {
+        sub2 = line.substr(pos - *prev + 1, line.length());
+    }
+    sub2 = edit(sub2);
+    if (token == '(') {
+        // cutting the ')' at the end
+        sub2 = sub2.substr(0, sub2.length()-1);
+    }
+    (*deque).push_back(sub2);
+    *sizeDeque += 1;
+    *prev = 0;
 }
 
 string* buildArr(int sizeDeque, deque<string> deque) {

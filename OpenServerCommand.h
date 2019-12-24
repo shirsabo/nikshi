@@ -14,7 +14,7 @@
 
 class OpenServerCommand: public Command {
 private:
-    std::unordered_map<string, Var *> *varTable;
+    unordered_map<string, Var *> *varTable;
     int *offWhileServer;
     int client_socket = 0;
 public:

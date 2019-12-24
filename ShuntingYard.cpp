@@ -601,7 +601,7 @@ bool Interpreter::isNameValid(string s) {
 Interpreter::~Interpreter() {
 }
 
-double ShuntingYard::useShuntingYard(string *s, unordered_map<string, Var *> *varTable) {
+float ShuntingYard::useShuntingYard(string *s, unordered_map<string, Var *> *varTable) {
     string see = *s;
     double x;
     Interpreter *interpret = new Interpreter();

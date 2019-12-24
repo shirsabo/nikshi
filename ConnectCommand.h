@@ -8,11 +8,17 @@
 #define EX3_CONNECTCOMMAND_H
 
 #include "Command.h"
+#include "Var.h"
+#include <string>
+#include <unordered_map>
 
 class ConnectCommand : public Command {
 private:
+    unordered_map<string, Var *> *varTable;
     int client_socket = 0;
 public:
+    ConnectCommand(unordered_map<string, Var *> *pMap);
+
     int execute(string *);
 
     void connection(string *s);
