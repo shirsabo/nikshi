@@ -1,6 +1,4 @@
 #include "Var.h"
-#include "DefineVarCommand.h"
-#include "Command.h"
 #include <string>
 
 Var::Var(string nameIn, string simIn, string inoutIn) {
@@ -26,9 +24,6 @@ float Var::getValue() {
 
 void Var::setValue(float val) {
     this->value = val;
-    if (this->getName() == "engine_rpm" && val > 0) {
-        cout << "hi";
-    }
 }
 
 string Var::getArrow(){

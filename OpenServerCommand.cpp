@@ -12,7 +12,6 @@
 using namespace std;
 
 int OpenServerCommand::execute(string *s) {
-
     return 2;
 }
 
@@ -38,7 +37,6 @@ void OpenServerCommand::initializeServerMap(string *s) {
 }
 
 void OpenServerCommand::updateMap(string buffer, bool firstTime) {
-    //buffer = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,32,33,34,35,36";
     int i = 1;
     string s = buffer, sub;
     cout << s << endl;
@@ -83,7 +81,7 @@ int OpenServerCommand::acceptence(string *s) {
     //we need to convert our number to a number that the network understands.
     //the actual bind command
     if (bind(socketfd, (struct sockaddr *) &address, sizeof(address)) == -1) {
-        cout<< "Bad connedction\n";
+        throw "Bad connedction\n";
     }
     //making socket listen to the port
     if (listen(socketfd, 5) == -1) { //can also set to SOMAXCON (max connections)
@@ -408,13 +406,10 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
 
 void OpenServerCommand::notFirstRead(string sub, int i) {
     string sim;
-    if (i == 36) {
-        cout<<"rpm-------------------------------------------------------------"<<endl;
-    }
     sim = initializeVars(sub, i, false);
     // finding the var from the server map
     if (this->varTable == NULL) {
-        std::cout << "erorrrrrrrrrrrrrrrrrrrrrrrrrrrrrr" << endl;
+        std::cout << "eror openServerCommand" << endl;
     }
     auto pos = this->varTable->find(sim);
     if (pos == this->varTable->end()) {
@@ -423,7 +418,6 @@ void OpenServerCommand::notFirstRead(string sub, int i) {
         cout << "error - problem in open server command: not first read" << endl;
     } else {
         pos->second->setValue(stof(sub));
-        //cout << "changing the server map: "+ pos->first+ " " + sub<< endl;
     }
 }
 

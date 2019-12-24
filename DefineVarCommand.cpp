@@ -27,34 +27,7 @@ int DefineVarCommand::execute(string *s) {
             this->varTable->insert({*s, newVar});
         }
         return 5;
-        /*
-    } else if (checkForEqual(s) == 1) {
-        // there is a '=' sign
-        string *arr = seperateString(s);
-        if (arr[1] != "") {
-            // x=val
-            auto pos = varTable->find(arr[0]);
-            if (pos == varTable->end()) {
-                Var *newVar = new Var(arr[0], "", "");
-                newVar->setValue(stod(arr[1]));
-                this->varTable->insert({arr[0], newVar});
-            } else {
-                pos->second->setValue(stod(arr[1]));
-            }
-            return 2;
-        } else {
-            // x= val
-            auto pos = varTable->find(arr[0]);
-            if (pos == varTable->end()) {
-                Var *newVar = new Var(arr[0], "", "");
-                newVar->setValue(stof(*(s + 1)));
-                this->varTable->insert({arr[0], newVar});
-            } else {
-                pos->second->setValue(stod(*(s + 1)));
-            }
-            return 3;
-        }
-         */
+
     } else if (checkForEqual(s) == 2) {
         string name = *s;
         string next = *(s+1);
@@ -69,21 +42,6 @@ int DefineVarCommand::execute(string *s) {
                 pos->second->setValue(val);
             }
             return 4;
-        /*else {
-            // x =val
-            std::size_t index = (*(s + 1)).find_first_of("=", 0);
-            string val = (*(s + 1)).substr(index + 1, (*(s + 1)).length());
-            auto pos = varTable->find(*s);
-            if (pos == varTable->end()) {
-                Var *newVar = new Var(name, "", "");
-                newVar->setValue(stod(val));
-                this->varTable->insert({name, newVar});
-            } else {
-                pos->second->setValue(stod(val));
-            }
-            return 3;
-        }
-         */
     }
 }
 
@@ -146,7 +104,7 @@ Var *DefineVarCommand::checkInServerMap(string *s) {
     if (pos == server_map->end()) {
         return nullptr;
     } else {
-        cout<< "found in server map"<<endl;
+        // found in server map
         return pos->second;
     }
 }

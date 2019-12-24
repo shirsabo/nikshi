@@ -13,7 +13,6 @@ void ConditionParser::parser(unordered_map<string, Command *> *mp, string *array
     while (index < size) {
         auto pos = mp->find(array[index]);
         if (pos == mp->end()) {
-            //handle the error
             index += 1;
         } else {
             Command *c = pos->second;
@@ -27,30 +26,12 @@ void ConditionParser::parser(unordered_map<string, Command *> *mp, string *array
 bool ConditionParser::checkCondition(string *original) {
 
     double y = 0, x = 0;
-    string s = *original;
-    /*
-    auto pos = ((this->varTable))->find(s);
-    if (pos == this->varTable->end()) {
-        // checking if it's a number
-        if (isNumber(*original)) {
-            x = stod(*original);
-        } else {
-            throw "unvalid input";
-        }
-    } else {
-        // it's a var
-        x = pos->second->getValue();
-    }
-     */
     // calculating using the shunting yard
     x = ShuntingYard::useShuntingYard(original, this->varTable);
     // moving to the sign
     string *sign = original + 1;
-    string check = *sign;
     // moving to the next word
     original = original + 2;
-    string num = *original;
-    std::string::size_type sz = 0;
     y = ShuntingYard::useShuntingYard(original, this->varTable);
     if (*sign == "==") {
         if (x == y) {
@@ -82,7 +63,6 @@ bool ConditionParser::checkCondition(string *original) {
     return false;
 }
 
-
 bool ConditionParser::isNumber(string s) {
     for (unsigned int i = 0; i < s.length(); i++) {
         if ((i == 0) && (isdigit(s[i]))) {
@@ -106,14 +86,13 @@ bool ConditionParser::isNumber(string s) {
 int ConditionParser::executeHelper(string *s) {
     string *original = s;
     string check1 = *original;
-// checking what is the size of the loop command
-// initializing because of the words: {,}
+    // checking what is the size of the loop command
+    // initializing because of the words: {,}
     int sizeLoopCommand = 3, sizeUntilEnd = 0;
     condition = checkCondition(original);
-string shir = *(s+4);
+    string shir = *(s + 4);
     while (*s != "{") {
         string check = *s;
-        //sizeUntilEnd += 1;
         sizeLoopCommand += 1;
         s += 1;
     }
@@ -123,7 +102,7 @@ string shir = *(s+4);
     string check;
     while (*s != "}") {
         check = *s;
-        if (*s == ""){
+        if (*s == "") {
             continue;
         }
         sizeUntilEnd += 1;
@@ -131,42 +110,15 @@ string shir = *(s+4);
         s += 1;
         check = *s;
     }
-// if the condition is false - returning to the main without doing anything
+    // if the condition is false - returning to the main without doing anything
     if (!condition) {
         return sizeLoopCommand;
     }
-// executing the loop if the condition is true
+    // executing the loop if the condition is true
     parser(this->commandMap, original, sizeUntilEnd);
     return sizeLoopCommand;
-    /*
-    if (typeid(this).name() == "LoopCommand") {
-        return 0;
-    } else {
-        return sizeLoopCommand;
-    }
-     */
 }
-/*
-double ConditionParser::useShuntingYard(string *s) {
-    string see = *s;
-    double x;
-    Interpreter* interpret = new Interpreter();
-    Expression* ex1 = nullptr;
-    try {
-        interpret->setVariables(this->varTable);
-        ex1 = interpret->interpret(*s);
-        x = ex1->calculate();
-        delete ex1;
-    } catch(const char* e) {
-        if (ex1 != nullptr) {
-            delete ex1;
-        }
-        std::cout << "error in shunting yard" << std::endl;
-    }
-    delete(interpret);
-    return x;
-}
-*/
+
 bool ConditionParser::getCondition() {
     return condition;
 }

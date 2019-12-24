@@ -34,6 +34,10 @@ void editConditionParser(string s, deque<string> *deque, int *sizeDeque);
 
 bool isSign(char &c);
 
+string* buildArr(int sizeDeque, deque<string> deque);
+
+void iterateParser(int size, unordered_map<string, Command *> *mp, int *index, string *array);
+
 int main(int argsc, char *argv[]) {
     int *offWhileServer;
     int off = 0;
@@ -85,23 +89,27 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
             t4 = thread(&ConnectCommand::connection, ref(m2), &array[index + 1]);
         }
     }
-    while (index < size) {
-        auto pos = mp->find(array[index]);
-        if (pos == mp->end()) {
-            // check if it's assignment line (rpm = 0)
-            /*** error ***/
-            index += 1;
-        } else {
-            Command *c = pos->second;
-            string check1 = array[index];
-            string check = array[index + 1];
-            index += c->execute(&array[index + 1]);
-        }
-    }
+    // iterating over the array
+    iterateParser(size, mp, &index, array);
     // ending the loop in the open server command
     *offWhileServer = 1;
     t4.join();
     t3.join();
+}
+
+void iterateParser(int size, unordered_map<string, Command *> *mp, int *index, string *array) {
+    while (*index < size) {
+        auto pos = mp->find(array[*index]);
+        if (pos == mp->end()) {
+            // check if it's assignment line (rpm = 0)
+            *index += 1;
+        } else {
+            Command *c = pos->second;
+            string check1 = array[*index];
+            string check = array[*index + 1];
+            *index += c->execute(&array[*index + 1]);
+        }
+    }
 }
 
 void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var *> *varTable,
@@ -113,16 +121,16 @@ void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var
     SleepCommand *sleep = new SleepCommand();
     AssignCommand *assign = new AssignCommand(varTable, connect);
     //must be the last one we enter because it has a map of the commands too
-    ConditionParser *I = new IfCommand(pMap, varTable);
-    ConditionParser *L = new LoopCommand(pMap, varTable);
+    ConditionParser *ifCommand = new IfCommand(pMap, varTable);
+    ConditionParser *loopCommand = new LoopCommand(pMap, varTable);
 
     pMap->insert(pair<string, Command *>("openDataServer", openCommand));
     pMap->insert(pair<string, Command *>("connectControlClient", connect));
     pMap->insert(pair<string, Command *>("var", varCommand));
     pMap->insert(pair<string, Command *>("Print", print));
     pMap->insert(pair<string, Command *>("Sleep", sleep));
-    pMap->insert(pair<string, Command *>("while", L));
-    pMap->insert(pair<string, Command *>("if", I));
+    pMap->insert(pair<string, Command *>("while", loopCommand));
+    pMap->insert(pair<string, Command *>("if", ifCommand));
     pMap->insert(pair<string, Command *>("=", assign));
 }
 
@@ -198,6 +206,14 @@ string *lexer(char *argv[]) {
         }
     }
     // entering the deque to an array
+    string *array = buildArr(sizeDeque, deque);
+    if (array->length() == 0) {
+        return NULL;
+    }
+    return array;
+}
+
+string* buildArr(int sizeDeque, deque<string> deque) {
     sizeAr = sizeDeque;
     string *array = new string[sizeDeque];
     int i = 0;
@@ -208,10 +224,7 @@ string *lexer(char *argv[]) {
         i += 1;
         sizeDeque -= 1;
     }
-    if (array->length() == 0) {
-        return NULL;
-    }
-    return (array);
+    return array;
 }
 
 void editConditionParser(string s, deque <string> *deque, int *sizeDeque) {

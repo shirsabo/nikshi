@@ -8,14 +8,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <map>
-#include<iterator>
-#include "Command.h"
 #include <unordered_map>
-
-
-//double Expression::calculate() {}
-
-
 
 BinaryOperator::BinaryOperator(Expression *left, Expression *right) : left1(left), right1(right) {}
 
@@ -251,9 +244,6 @@ Expression *Interpreter::interpret(string s) {
         this->readAndAllocate(s);
         Expression *exp = solve();
         expressionStuck.pop();
-        //if (expressionStuck.size() != 0) {
-        //  throw "unvalid input";
-        //}
         return exp;
     } catch (exception e) {
         if (g1.compare(e.what()) == 0) {
@@ -270,22 +260,6 @@ Expression *Interpreter::interpret(string s) {
             throw "could'nt build an expression";
         }
     }
-    /*catch (const char* e){
-        if (g1.compare(e) == 0) {
-            throw g1;
-        } else if (g2.compare(e) == 0) {
-            throw g2;
-        } else if (g3.compare(e) == 0) {
-            throw g3;
-        } else if (g4.compare(e) == 0) {
-            throw g4;
-        } else if (g5.compare(e) == 0) {
-            throw g5;
-        } else {
-            throw "could'nt build an expression";
-        }
-    }
-     */
 }
 
 // enters the tokens to the stack and queue
@@ -348,7 +322,6 @@ void Interpreter::manageOperators(char enterOp, char previous) {
     } else if (this->operatorStuck.empty() && enterOp == ')') {
         throw "unvalid input";
     } else {
-        //while (!this->operatorStuck.empty()) {
         char stuckOp = this->operatorStuck.top();
         if (precedence(enterOp, stuckOp, previous) == 0) {
             // the entered operator has higher precedence
@@ -382,7 +355,6 @@ void Interpreter::manageOperators(char enterOp, char previous) {
             this->operatorStuck.pop();
         }
     }
-    //}
 }
 
 // returns 1 if the stuck operator has bigger oe equal precedence and 0 if not, and 2 if its ')'
@@ -443,11 +415,9 @@ void Interpreter::moveOperators() {
 
 Expression *Interpreter::solve() {
     // building an expression
-    //int flag = 0;
     while (this->outputOueue.size() != 0) {
         char token = this->outputOueue.front();
         if (this->checkIfOperator(token)) {
-            //flag = 0;
             // the token is an operator
             makeExpressionOperator(token);
         } else {

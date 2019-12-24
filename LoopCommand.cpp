@@ -9,7 +9,6 @@
 LoopCommand::LoopCommand(unordered_map<string, Command *> *mapCommandIn, unordered_map<string, Var *> *varTableIn) {
     this->commandMap = mapCommandIn;
     this->varTable = varTableIn;
-    // this->funcParser = func;
 }
 
 int LoopCommand::execute(string *s) {
