@@ -1,5 +1,8 @@
 #include "Var.h"
 #include <string>
+#include <mutex>
+
+std::mutex mutex_lock;
 
 Var::Var(string nameIn, string simIn, string inoutIn) {
     this->name = nameIn;
@@ -23,7 +26,9 @@ float Var::getValue() {
 }
 
 void Var::setValue(float val) {
+    mutex_lock.lock();
     this->value = val;
+    mutex_lock.unlock();
 }
 
 string Var::getArrow(){

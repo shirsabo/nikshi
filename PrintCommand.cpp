@@ -33,7 +33,6 @@ int PrintCommand::execute(std::__cxx11::string *print) {
         std::cout << " ";
         std::cout << *print;
         print = print + 1;
-        string s = *print;
         index += 1;
     }
     // printing the last word

@@ -27,7 +27,6 @@ int DefineVarCommand::execute(string *s) {
             this->varTable->insert({*s, newVar});
         }
         return 5;
-
     } else if (checkForEqual(s) == 2) {
         string name = *s;
         string next = *(s+1);
@@ -43,6 +42,8 @@ int DefineVarCommand::execute(string *s) {
             }
             return 4;
     }
+    // never used
+    return 1;
 }
 
 bool DefineVarCommand::checkForErrow(string *s) {
@@ -55,9 +56,9 @@ bool DefineVarCommand::checkForErrow(string *s) {
 
 int DefineVarCommand::checkForEqual(string *s) {
     string check = *s;
-    if (((*s).find_first_of("=", 0) != -1)) {
+    if (((*s).find_first_of("=", 0) != std::string::npos)) {
         return 1;
-    } else if ((*(s+1)).find_first_of("=", 0) != -1){
+    } else if ((*(s+1)).find_first_of("=", 0) != std::string::npos){
         return 2;
     }
     return 0;

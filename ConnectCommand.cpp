@@ -19,12 +19,13 @@ ConnectCommand::ConnectCommand(unordered_map<string, Var *> *pMap) {
 }
 
 int ConnectCommand::execute(string *s) {
+    string s1 = *s;
     return 2;
 }
 
 void ConnectCommand::connection(string *s) {
-    int client_socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (client_socket == -1) {
+    int client_socket1 = socket(AF_INET, SOCK_STREAM, 0);
+    if (client_socket1 == -1) {
         //error
         std::cerr << "Could not create a socket" << std::endl;
     }
@@ -38,12 +39,11 @@ void ConnectCommand::connection(string *s) {
     // calculating the local_host
     float host = ShuntingYard::useShuntingYard(&port, this->varTable);
     address.sin_port = htons((int)host);
-    int is_connect = connect(client_socket, (struct sockaddr *) &address, sizeof(address));
+    int is_connect = connect(client_socket1, (struct sockaddr *) &address, sizeof(address));
     if (is_connect == -1) {
         std::cerr << "Could not connect to host server" << std::endl;
     }
-    clientSetter(client_socket);
-    //close(client_socket);
+    clientSetter(client_socket1);
 }
 
 void ConnectCommand::changeValue(string sim, double value) {

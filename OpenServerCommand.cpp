@@ -13,6 +13,7 @@
 using namespace std;
 
 int OpenServerCommand::execute(string *s) {
+    string s1 = *s;
     return 2;
 }
 
@@ -21,7 +22,7 @@ OpenServerCommand::OpenServerCommand(std::unordered_map<string, Var *> *pMap, in
     this->offWhileServer = offWhileServerIn;
 }
 
-int OpenServerCommand::dataEntryPoint(string *s) {
+int OpenServerCommand::dataEntryPoint() {
     //reading from client
     while (!*offWhileServer) {
         string buffer = readOneChar();
@@ -30,7 +31,7 @@ int OpenServerCommand::dataEntryPoint(string *s) {
     return 0;
 }
 
-void OpenServerCommand::initializeServerMap(string *s) {
+void OpenServerCommand::initializeServerMap() {
     //reading one char at a time
     string buffer = readOneChar();
     updateMap(buffer, true);
@@ -45,7 +46,7 @@ void OpenServerCommand::updateMap(string buffer, bool firstTime) {
             sub = s.substr(prev, pos - prev);
             if (firstTime) {
                 // creating the server map by creating new vars
-                string s = initializeVars(sub, i, true);
+                string s1 = initializeVars(sub, i, true);
             } else {
                 // updating the server map by the new values
                 notFirstRead(sub, i);
@@ -65,7 +66,7 @@ void OpenServerCommand::updateMap(string buffer, bool firstTime) {
     }
 }
 
-int OpenServerCommand::acceptence(string *s) {
+void OpenServerCommand::acceptence(string *s) {
     int socketfd = socket(AF_INET, SOCK_STREAM, 0);
     if (socketfd == -1) {
         //error
@@ -90,17 +91,17 @@ int OpenServerCommand::acceptence(string *s) {
     }
 //waiting until connection
     // accepting a client
-    int client_socket = accept(socketfd, (struct sockaddr *) &address,
+    int client_socket1 = accept(socketfd, (struct sockaddr *) &address,
                                (socklen_t *) &address);
-    if (client_socket == -1) {
+    if (client_socket1 == -1) {
         throw "Bad connedction\n";
     }
-    clientSetter(client_socket);
+    clientSetter(client_socket1);
     close(socketfd); //closing the listening socket
 }
 
-void OpenServerCommand::clientSetter(int socket) {
-    this->client_socket = socket;
+void OpenServerCommand::clientSetter(int socketIn) {
+    this->client_socket = socketIn;
 }
 
 string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
@@ -421,7 +422,7 @@ string OpenServerCommand::readOneChar() {
     char buffer[1] = {0};
     int flag = 1;
     while (flag) {
-        int valread = ::read(client_socket, buffer, 1);
+        ::read(client_socket, buffer, 1);
         if (buffer[0] != '\n') {
             line = line + buffer;
         } else {

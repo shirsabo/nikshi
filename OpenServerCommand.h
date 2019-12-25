@@ -16,7 +16,7 @@ class OpenServerCommand: public Command {
 private:
     unordered_map<string, Var *> *varTable;
     int *offWhileServer;
-    int client_socket = 0;
+    int client_socket;
 public:
     OpenServerCommand(std::unordered_map<string, Var *> *pMap, int *offWhileServer);
 
@@ -28,13 +28,13 @@ public:
 
     void notFirstRead(string sub, int i);
 
-    int dataEntryPoint(string *s);
+    int dataEntryPoint();
 
-    int acceptence(string *s);
+    void acceptence(string *s);
 
     void clientSetter(int socket);
 
-    void initializeServerMap(string *s);
+    void initializeServerMap();
 
     string readOneChar();
 };

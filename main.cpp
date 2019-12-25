@@ -15,7 +15,6 @@
 #include "SleepCommand.h"
 #include <unordered_map>
 #include <thread>
-#include "ShuntingYard.h"
 #include "AssignCommand.h"
 
 int sizeAr = 0;
@@ -43,7 +42,12 @@ void deleteProject(unordered_map<string, Var *> *serverMap, unordered_map<string
 
 void enterLine(char token, deque<string> *deque, size_t pos, size_t *prev, string line, int *sizeDeque);
 
+void deleteCommands(deque<Command *> deque);
+
 int main(int argsc, char *argv[]) {
+    if (argsc != 2) {
+        cout << "unexpected arguments"<<endl;
+    }
     int *offWhileServer;
     int off = 0;
     offWhileServer = &off;
@@ -62,7 +66,15 @@ int main(int argsc, char *argv[]) {
 
 void deleteProject(unordered_map<string, Var *> *serverMap, unordered_map<string, Var *> *varTable,
     unordered_map<string, Command *> *mp) {
-
+    for (auto &iter:*serverMap) {
+        delete iter.second;
+    }
+    for (auto &iter:*varTable) {
+        delete iter.second;
+    }
+    for (auto &iter:*mp) {
+        delete iter.second;
+    }
 }
 
 void parser(unordered_map<string, Command *> *mp, string *array, int size, int *offWhileServer) {
@@ -85,10 +97,10 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
                 // waiting for the server to accept the call
                 thread t1(&OpenServerCommand::acceptence, ref((c1)), &(array[index + 1]));
                 t1.join();
-                thread t2(&OpenServerCommand::initializeServerMap, ref((c1)), &(array[index + 1]));
+                thread t2(&OpenServerCommand::initializeServerMap, ref((c1)));
                 t2.join();
                 // starting to get information from the server
-                t3 = thread(&OpenServerCommand::dataEntryPoint, ref((c1)), &(array[index + 1]));
+                t3 = thread(&OpenServerCommand::dataEntryPoint, ref((c1)));
                 index += 2;
                 continue;
             }
@@ -109,6 +121,7 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
 }
 
 void iterateParser(int size, unordered_map<string, Command *> *mp, int *index, string *array) {
+    deque<Command*> dequeCommand;
     while (*index < size) {
         auto pos = mp->find(array[*index]);
         if (pos == mp->end()) {
@@ -119,7 +132,16 @@ void iterateParser(int size, unordered_map<string, Command *> *mp, int *index, s
             string check1 = array[*index];
             string check = array[*index + 1];
             *index += c->execute(&array[*index + 1]);
+            dequeCommand.push_front(c);
         }
+    }
+    // delete all the commands after they were executed
+    deleteCommands(dequeCommand);
+}
+
+void deleteCommands(deque<Command *> deque) {
+    for (auto &iter:) {
+        delete iter.second;
     }
 }
 
