@@ -122,3 +122,5 @@ int ConditionParser::executeHelper(string *s) {
 bool ConditionParser::getCondition() {
     return condition;
 }
+
+

@@ -14,6 +14,7 @@ private:
     unordered_map <string, Var*>* varTable;
 public:
     PrintCommand(unordered_map <string, Var*>* varTable);
+
     int execute(string* print);
 };
 
