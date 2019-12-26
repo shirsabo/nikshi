@@ -42,8 +42,6 @@ void deleteProject(unordered_map<string, Var *> *serverMap, unordered_map<string
 
 void enterLine(char token, deque<string> *deque, size_t pos, size_t *prev, string line, int *sizeDeque);
 
-void deleteCommands(deque<Command *> deque);
-
 int main(int argsc, char *argv[]) {
     if (argsc != 2) {
         cout << "unexpected arguments" << endl;
@@ -121,7 +119,6 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
 }
 
 void iterateParser(int size, unordered_map<string, Command *> *mp, int *index, string *array) {
-    //deque<Command *> dequeCommand;
     while (*index < size) {
         auto pos = mp->find(array[*index]);
         if (pos == mp->end()) {
@@ -132,18 +129,7 @@ void iterateParser(int size, unordered_map<string, Command *> *mp, int *index, s
             string check1 = array[*index];
             string check = array[*index + 1];
             *index += c->execute(&array[*index + 1]);
-            //dequeCommand.push_front(c);
         }
-    }
-    // delete all the commands after they were executed
-    //deleteCommands(dequeCommand);
-}
-
-void deleteCommands(deque<Command *> deque) {
-    while (deque.size() > 0) {
-        Command *c = deque.front();
-        deque.pop_front();
-        delete c;
     }
 }
 
@@ -238,11 +224,13 @@ string *lexer(char *argv[]) {
             continue;
         }
     }
+
     // entering the deque to an array
     string *array = buildArr(sizeDeque, deque);
     if (array->length() == 0) {
         return NULL;
     }
+    fclose(file);
     return array;
 }
 
