@@ -8,12 +8,29 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <deque>
+#include <thread>
 #include "ShuntingYard.h"
 
 using namespace std;
 
 int OpenServerCommand::execute(string *s) {
-    string s1 = *s;
+    /*
+    thread t3;
+    thread t4;
+    Command *c, *m;
+    OpenServerCommand *c1;
+    c = this;
+    c1 = ((OpenServerCommand *) c);
+    // waiting for the server to accept the call
+    thread t1(acceptence, *(s + 1));
+    //thread t1(&OpenServerCommand::acceptence, ref(), *(s + 1));
+    t1.join();
+    thread t2(&OpenServerCommand::initializeServerMap, ref((c1)));
+    t2.join();
+    // starting to get information from the server
+    t3 = thread(&OpenServerCommand::dataEntryPoint, ref((c1)));
+    t3.detach();
+     */
     return 2;
 }
 
@@ -70,7 +87,7 @@ void OpenServerCommand::acceptence(string *s) {
     int socketfd = socket(AF_INET, SOCK_STREAM, 0);
     if (socketfd == -1) {
         //error
-        throw "Bad connedction";
+        cerr<< "Bad connedction";
     }
     //bind socket to IP address
     // we first need to create the sockaddr obj.
@@ -79,22 +96,22 @@ void OpenServerCommand::acceptence(string *s) {
     address.sin_addr.s_addr = INADDR_ANY; //give me any IP allocated for my machine
     // calculating the number entered
     float port = ShuntingYard::useShuntingYard(s, this->varTable);
-    address.sin_port = htons((int)port);
+    address.sin_port = htons((int) port);
     //we need to convert our number to a number that the network understands.
     //the actual bind command
     if (bind(socketfd, (struct sockaddr *) &address, sizeof(address)) == -1) {
-        throw "Bad connedction\n";
+        cerr<< "Bad connedction\n";
     }
     //making socket listen to the port
     if (listen(socketfd, 5) == -1) { //can also set to SOMAXCON (max connections)
-        throw "Bad connedction\n";
+        cerr<< "Bad connedction\n";
     }
 //waiting until connection
     // accepting a client
     int client_socket1 = accept(socketfd, (struct sockaddr *) &address,
-                               (socklen_t *) &address);
+                                (socklen_t *) &address);
     if (client_socket1 == -1) {
-        throw "Bad connedction\n";
+        cerr<< "Bad connedction\n";
     }
     clientSetter(client_socket1);
     close(socketfd); //closing the listening socket
@@ -417,6 +434,7 @@ void OpenServerCommand::notFirstRead(string sub, int i) {
         pos->second->setValue(stof(sub));
     }
 }
+
 string OpenServerCommand::readOneChar() {
     string line = "";
     char buffer[1] = {0};

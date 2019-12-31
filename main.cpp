@@ -63,6 +63,7 @@ int main(int argsc, char *argv[]) {
     return 0;
 }
 
+/** deleting the commands and the vars **/
 void deleteProject(unordered_map<string, Var *> *serverMap, unordered_map<string, Var *> *varTable,
                    unordered_map<string, Command *> *mp) {
     for (auto &iter:*serverMap) {
@@ -76,6 +77,7 @@ void deleteProject(unordered_map<string, Var *> *serverMap, unordered_map<string
     }
 }
 
+/** reading the text file and execute accordingly**/
 void parser(unordered_map<string, Command *> *mp, string *array, int size, int *offWhileServer) {
     int index = 0;
     thread t3;
@@ -85,6 +87,10 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
     ConnectCommand *m2;
     // executing the first two lines
     for (int i = 0; i < 2; i++) {
+        string check = array[index];
+        if ((array[index] != "openDataServer") && array[index] != "connectControlClient") {
+            continue;
+        }
         auto pos = mp->find(array[index]);
         if (pos == mp->end()) {
             // check if it's assignment line (rpm = 0)
@@ -118,6 +124,7 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
     t3.join();
 }
 
+/** going through the array and executing the command accordingly **/
 void iterateParser(int size, unordered_map<string, Command *> *mp, int *index, string *array) {
     while (*index < size) {
         auto pos = mp->find(array[*index]);
@@ -133,6 +140,7 @@ void iterateParser(int size, unordered_map<string, Command *> *mp, int *index, s
     }
 }
 
+/** creating a map of commands with the suitable keys according to specific words in the text file **/
 void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var *> *varTable,
                unordered_map<string, Var *> *server_map, int *offWhileServer) {
     OpenServerCommand *openCommand = new OpenServerCommand(server_map, offWhileServer);
@@ -145,6 +153,7 @@ void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var
     ConditionParser *ifCommand = new IfCommand(pMap, varTable);
     ConditionParser *loopCommand = new LoopCommand(pMap, varTable);
 
+    // entering all the command and their keys to the map
     pMap->insert(pair<string, Command *>("openDataServer", openCommand));
     pMap->insert(pair<string, Command *>("connectControlClient", connect));
     pMap->insert(pair<string, Command *>("var", varCommand));
@@ -155,6 +164,8 @@ void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var
     pMap->insert(pair<string, Command *>("=", assign));
 }
 
+/** going through the text file and removing unneccessery chars. at the end entering all the words in the text
+    to an array **/
 string *lexer(char *argv[]) {
     deque<string> deque;
     int sizeDeque = 0;
@@ -178,6 +189,7 @@ string *lexer(char *argv[]) {
                 sizeDeque += 1;
                 string sub2 = line.substr(pos - prev + 1, line.length());
                 if (line[pos] == '=') {
+                    // entering all the line to the deque after removing the spaces
                     enterLine('=', &deque, pos, &prev, line, &sizeDeque);
                     break;
                 } else if (line[pos] == '(') {
@@ -201,6 +213,7 @@ string *lexer(char *argv[]) {
             }
             if (line[pos] == '=') {
                 if (pos == 0) {
+                    // entering all the line to the deque after removing the spaces
                     enterLine('=', &deque, pos, &prev, line, &sizeDeque);
                     break;
                 } else {
@@ -210,13 +223,15 @@ string *lexer(char *argv[]) {
                     continue;
                 }
             }
-            prev = pos + 1;
+            line = line.substr(pos + 1, line.length());
+            prev = 0;
+            //prev = pos + 1;
         }
         if ((line[0] == ' ') || (line[0] == ',') || (line[0] == '(') || (line[0] == ')') || (line[0] == '\t')) {
             line = line.substr(1, line.length());
         }
         // printing the {,} and the end of the line if it does'nt contain any of the checked chars
-        if (((line != "" && line != ")") && (line.find_first_of(" ,(\t)", prev)) == std::string::npos)
+        if (((line != "" && line != ")") && (line.find_first_of(" ,(\t)=", prev)) == std::string::npos)
             || (line.find_first_of("{}", prev)) != std::string::npos) {
             deque.push_back(line);
             sizeDeque += 1;
@@ -234,6 +249,7 @@ string *lexer(char *argv[]) {
     return array;
 }
 
+/** in case we have an equals sign or parenthesis - entering all the line to the deque after removing the spaces **/
 void enterLine(char token, deque <string> *deque, size_t pos, size_t *prev, string line, int *sizeDeque) {
     string sub2;
     if (token == '=') {
@@ -255,6 +271,7 @@ void enterLine(char token, deque <string> *deque, size_t pos, size_t *prev, stri
     *prev = 0;
 }
 
+/** entering the deque to an array as required **/
 string *buildArr(int sizeDeque, deque <string> deque) {
     sizeAr = sizeDeque;
     string *array = new string[sizeDeque];
@@ -269,9 +286,11 @@ string *buildArr(int sizeDeque, deque <string> deque) {
     return array;
 }
 
+/** entering the line to the deque as needed for the while or the if command **/
 void editConditionParser(string s, deque <string> *deque, int *sizeDeque) {
     size_t prev = 0, pos;
     string afterSign = s;
+    // looking for a sign so we will know what condition to check
     if ((pos = s.find_first_of("<>=!", prev)) != std::string::npos) {
         string cut1 = s.substr(prev, pos);
         // removing spaces
@@ -302,6 +321,7 @@ void editConditionParser(string s, deque <string> *deque, int *sizeDeque) {
     *sizeDeque += 2;
 }
 
+/** checking if the char is a specific char that is a sign **/
 bool isSign(char &c) {
     if (c == '<' || c == '>' || c == '=') {
         return true;
@@ -309,6 +329,7 @@ bool isSign(char &c) {
     return false;
 }
 
+/** removing spaces from a line **/
 string edit(string s) {
     size_t prev = 0, pos;
     while ((pos = s.find_first_of(" ", prev)) != std::string::npos) {

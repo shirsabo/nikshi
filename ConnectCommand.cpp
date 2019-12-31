@@ -11,6 +11,7 @@
 #include <arpa/inet.h>
 #include <cstring>
 #include <unistd.h>
+#include <thread>
 
 using namespace std;
 
@@ -18,11 +19,21 @@ ConnectCommand::ConnectCommand(unordered_map<string, Var *> *pMap) {
     this->varTable = pMap;
 }
 
+/** executing the command - creating a client **/
 int ConnectCommand::execute(string *s) {
-    string s1 = *s;
+    /*
+    thread t3;
+    thread t4;
+    Command *c, *m;
+    ConnectCommand *m2;
+    m2 = ((ConnectCommand *) m);
+    t4 = thread(&ConnectCommand::connection, ref(m2),*(s+1));
+    t4.join();
+     */
     return 2;
 }
 
+/** connecting to the client, printing a message if could not connect to host server and exiting **/
 void ConnectCommand::connection(string *s) {
     int client_socket1 = socket(AF_INET, SOCK_STREAM, 0);
     if (client_socket1 == -1) {
@@ -46,28 +57,33 @@ void ConnectCommand::connection(string *s) {
     clientSetter(client_socket1);
 }
 
+/** changing a var's value in the simulator according to the text file **/
 void ConnectCommand::changeValue(string sim, double value) {
-    //if here we made a connection
+    // if here we made a connection
     string val_string = to_string(value);
     sim = editSim(&sim);
     string send1 = "set " + sim + " " + val_string + "\r\n";
-    //cout << send1 << endl;
+    // sending the value to the client so the var's value will change in the simulator
     int is_sent = send(this->client_socket, send1.c_str(), strlen(send1.c_str()), 0);
     if (is_sent == -1) {
         std::cout << "Error sending message" << std::endl;
     }
 }
 
+/** initializing the client socket fiels in this class **/
 void ConnectCommand::clientSetter(int socket) {
     this->client_socket = socket;
 }
 
+/** removing the " sign from the sim **/
 string ConnectCommand::editSim(string *sim) {
     string check2 = *sim;
     *sim = sim->substr(2, (sim->length() - 3));
     string check = *sim;
     return *sim;
 }
+
+/** closing the client socket **/
 ConnectCommand:: ~ConnectCommand() {
     close(this->client_socket);
 }
