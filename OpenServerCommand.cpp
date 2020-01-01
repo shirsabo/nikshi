@@ -8,29 +8,12 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <deque>
-#include <thread>
 #include "ShuntingYard.h"
 
 using namespace std;
 
 int OpenServerCommand::execute(string *s) {
-    /*
-    thread t3;
-    thread t4;
-    Command *c, *m;
-    OpenServerCommand *c1;
-    c = this;
-    c1 = ((OpenServerCommand *) c);
-    // waiting for the server to accept the call
-    thread t1(acceptence, *(s + 1));
-    //thread t1(&OpenServerCommand::acceptence, ref(), *(s + 1));
-    t1.join();
-    thread t2(&OpenServerCommand::initializeServerMap, ref((c1)));
-    t2.join();
-    // starting to get information from the server
-    t3 = thread(&OpenServerCommand::dataEntryPoint, ref((c1)));
-    t3.detach();
-     */
+    string s4 = *s;
     return 2;
 }
 
@@ -39,6 +22,8 @@ OpenServerCommand::OpenServerCommand(std::unordered_map<string, Var *> *pMap, in
     this->offWhileServer = offWhileServerIn;
 }
 
+/** receiving the information from the server and updating the var's values until we finish readinf
+ * the text file **/
 int OpenServerCommand::dataEntryPoint() {
     //reading from client
     while (!*offWhileServer) {
@@ -48,12 +33,14 @@ int OpenServerCommand::dataEntryPoint() {
     return 0;
 }
 
+/** receiving the information from the server and updating the var's values**/
 void OpenServerCommand::initializeServerMap() {
     //reading one char at a time
     string buffer = readOneChar();
     updateMap(buffer, true);
 }
 
+/** using the buffer to update the var's values by separating the numbers between the commas**/
 void OpenServerCommand::updateMap(string buffer, bool firstTime) {
     int i = 1;
     string s = buffer, sub;
@@ -83,11 +70,13 @@ void OpenServerCommand::updateMap(string buffer, bool firstTime) {
     }
 }
 
+/** connecting to the server **/
 void OpenServerCommand::acceptence(string *s) {
     int socketfd = socket(AF_INET, SOCK_STREAM, 0);
     if (socketfd == -1) {
         //error
-        cerr<< "Bad connedction";
+        cerr << "Bad connedction";
+        exit(1);
     }
     //bind socket to IP address
     // we first need to create the sockaddr obj.
@@ -100,27 +89,35 @@ void OpenServerCommand::acceptence(string *s) {
     //we need to convert our number to a number that the network understands.
     //the actual bind command
     if (bind(socketfd, (struct sockaddr *) &address, sizeof(address)) == -1) {
-        cerr<< "Bad connedction\n";
+        cerr << "Bad connedction\n";
+        exit(1);
     }
     //making socket listen to the port
     if (listen(socketfd, 5) == -1) { //can also set to SOMAXCON (max connections)
-        cerr<< "Bad connedction\n";
+        cerr << "Bad connedction\n";
+        exit(1);
     }
 //waiting until connection
     // accepting a client
     int client_socket1 = accept(socketfd, (struct sockaddr *) &address,
                                 (socklen_t *) &address);
     if (client_socket1 == -1) {
-        cerr<< "Bad connedction\n";
+        cerr << "Bad connedction\n";
+        exit(1);
     }
     clientSetter(client_socket1);
     close(socketfd); //closing the listening socket
 }
 
+/** getter of the client socket - for the distractor **/
 void OpenServerCommand::clientSetter(int socketIn) {
     this->client_socket = socketIn;
 }
 
+/** creating the vars and updating their sim and name by the generic_small file.
+ * updating their direction to be towards outside and
+ * their values to be 0.
+ * the string we send back is the sim of the var we entered it's i**/
 string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
     Var *varTemp;
     switch (i) {
@@ -419,6 +416,8 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
     }
 }
 
+
+/** updating the var's values according to the buffer we got from the server **/
 void OpenServerCommand::notFirstRead(string sub, int i) {
     string sim;
     sim = initializeVars(sub, i, false);
@@ -435,6 +434,8 @@ void OpenServerCommand::notFirstRead(string sub, int i) {
     }
 }
 
+/** reading the information from the server char by char until finding /n,
+ * combibng all the chars and returning the string so we can use it to update the var's values **/
 string OpenServerCommand::readOneChar() {
     string line = "";
     char buffer[1] = {0};

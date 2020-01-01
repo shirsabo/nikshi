@@ -8,24 +8,24 @@
 #include "Command.h"
 #include "Var.h"
 #include <unordered_map>
+#include <mutex>
+
 using namespace std;
 
 class DefineVarCommand: public Command {
 private:
     unordered_map <string, Var*>* varTable;
     unordered_map<string, Var *> *server_map;
+    mutex * mute_s;
+    mutex * mute_t;
 public:
-    DefineVarCommand(unordered_map <string, Var*>* varTable,  unordered_map<string, Var *> *server_map);
+    DefineVarCommand(unordered_map <string, Var*>* varTable,  unordered_map<string, Var *> *server_map,mutex* muteServerMap,mutex* varMute);
 
     int execute(string *);
 
     bool checkForErrow(string *pString);
 
     int checkForEqual(string *pString);
-
-    string* seperateString(string *pString);
-
-    bool checkIfNumber(string s);
 
     Var *checkInServerMap(string *pString);
 };

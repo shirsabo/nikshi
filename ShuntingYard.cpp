@@ -10,6 +10,11 @@
 #include <map>
 #include <unordered_map>
 
+/** the shunting yard class takes a string that has variables, numbers and mathmatical signs and
+ * creates an expression out of it.
+ * in order to calculates the expression we use the map provided in the setVariables func.
+ * we pay attention to order and the precedence.**/
+
 BinaryOperator::BinaryOperator(Expression *left, Expression *right) : left1(left), right1(right) {}
 
 BinaryOperator::~BinaryOperator() {

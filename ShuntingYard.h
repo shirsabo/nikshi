@@ -68,8 +68,6 @@ private:
     Expression* left1;
     Expression* right1;
 
-//private:
-//    Expression* expression = nullptr;
 };
 class Plus: public BinaryOperator {
 public:

@@ -13,8 +13,11 @@
 class LoopCommand : public ConditionParser {
 public:
     LoopCommand(unordered_map<string, Command *> *mapCommandIn, unordered_map <string, Var*>* varTableIn);
+
     int execute(string *string);
+
     ~LoopCommand();
+
     bool isNumber(string s);
 };
 

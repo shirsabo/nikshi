@@ -8,6 +8,7 @@ ConditionParser::~ConditionParser() {
 
 }
 
+/** going through the commands between the parenthesis and executing them **/
 void ConditionParser::parser(unordered_map<string, Command *> *mp, string *array, int size) {
     int index = 0;
     while (index < size) {
@@ -23,6 +24,7 @@ void ConditionParser::parser(unordered_map<string, Command *> *mp, string *array
     }
 }
 
+/** checking the condition of the Command so we will know if to execute the commands inside the parenthesis **/
 bool ConditionParser::checkCondition(string *original) {
 
     float y = 0, x = 0;
@@ -63,26 +65,8 @@ bool ConditionParser::checkCondition(string *original) {
     return false;
 }
 
-bool ConditionParser::isNumber(string s) {
-    for (unsigned int i = 0; i < s.length(); i++) {
-        if ((i == 0) && (isdigit(s[i]))) {
-            continue;
-        } else if ((i == 0) && (s[i] == '-')) {
-            if ((isdigit(s[1]))) {
-                continue;
-            } else {
-                return false;
-            }
-        } else if (i == 0) {
-            return false;
-        }
-        if (isdigit(s[i]) == 0 && s[i] != '.' && s[i] != '-') {
-            return false;
-        }
-    }
-    return true;
-}
-
+/** counting how many places in the array belong to this command so we'll know what number to return
+   from the execute func. executing the commands inside the parenthesis accordingly **/
 int ConditionParser::executeHelper(string *s) {
     string *original = s;
     string check1 = *original;
@@ -119,6 +103,8 @@ int ConditionParser::executeHelper(string *s) {
     return sizeLoopCommand;
 }
 
+
+/** getter of the condition - true or false **/
 bool ConditionParser::getCondition() {
     return condition;
 }

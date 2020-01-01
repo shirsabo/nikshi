@@ -11,6 +11,8 @@ using namespace std;
 PrintCommand::PrintCommand(unordered_map <string, Var*> * varTableIn) {
     this->varTable = varTableIn;
 }
+
+/** printing a sentence or a number we calculate using the shunting yard **/
 int PrintCommand::execute(std::__cxx11::string *print) {
     int index = 2;
     string s = *print;

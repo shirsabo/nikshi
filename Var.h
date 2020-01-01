@@ -16,8 +16,9 @@ private:
     string name = "";
 public:
     Var(string name, string sim, string inout);
-    string getName();
+
     float getValue();
+
     void setValue(float val);
 
     string getArrow();

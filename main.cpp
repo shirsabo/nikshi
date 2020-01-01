@@ -15,10 +15,15 @@
 #include "SleepCommand.h"
 #include <unordered_map>
 #include <thread>
+#include <mutex>
 #include "AssignCommand.h"
 
 int sizeAr = 0;
 using namespace std;
+unordered_map<string, Var *> s_map;
+unordered_map<string, Var *> v_map;
+std::mutex s_map_mutex;
+std::mutex v_map_mutex;
 
 string *lexer(char *argv[]);
 
@@ -42,6 +47,8 @@ void deleteProject(unordered_map<string, Var *> *serverMap, unordered_map<string
 
 void enterLine(char token, deque<string> *deque, size_t pos, size_t *prev, string line, int *sizeDeque);
 
+void enterLIneVar(string s, deque<string> *deque, int *sizeDeque);
+
 int main(int argsc, char *argv[]) {
     if (argsc != 2) {
         cout << "unexpected arguments" << endl;
@@ -52,8 +59,10 @@ int main(int argsc, char *argv[]) {
     string *array = lexer(argv);
     // creating map for the open server command
     unordered_map<string, Var *> *server_map = new unordered_map<string, Var *>;
+    s_map = *(server_map);
     // creating var table
     unordered_map<string, Var *> *varTable = new unordered_map<string, Var *>;
+    v_map = *(varTable);
     // creating a map of the commands
     unordered_map<string, Command *> mp;
     createMap(&mp, varTable, server_map, offWhileServer);
@@ -87,7 +96,6 @@ void parser(unordered_map<string, Command *> *mp, string *array, int size, int *
     ConnectCommand *m2;
     // executing the first two lines
     for (int i = 0; i < 2; i++) {
-        string check = array[index];
         if ((array[index] != "openDataServer") && array[index] != "connectControlClient") {
             continue;
         }
@@ -145,14 +153,13 @@ void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var
                unordered_map<string, Var *> *server_map, int *offWhileServer) {
     OpenServerCommand *openCommand = new OpenServerCommand(server_map, offWhileServer);
     ConnectCommand *connect = new ConnectCommand(varTable);
-    DefineVarCommand *varCommand = new DefineVarCommand(varTable, server_map);
+    DefineVarCommand *varCommand = new DefineVarCommand(varTable, server_map, &s_map_mutex, &v_map_mutex);
     PrintCommand *print = new PrintCommand(varTable);
     SleepCommand *sleep = new SleepCommand(varTable);
     AssignCommand *assign = new AssignCommand(varTable, connect);
     //must be the last one we enter because it has a map of the commands too
     ConditionParser *ifCommand = new IfCommand(pMap, varTable);
     ConditionParser *loopCommand = new LoopCommand(pMap, varTable);
-
     // entering all the command and their keys to the map
     pMap->insert(pair<string, Command *>("openDataServer", openCommand));
     pMap->insert(pair<string, Command *>("connectControlClient", connect));
@@ -188,6 +195,12 @@ string *lexer(char *argv[]) {
                 deque.push_back(sub1);
                 sizeDeque += 1;
                 string sub2 = line.substr(pos - prev + 1, line.length());
+                if (sub1 == "var") {
+                    // entering the line as needed to the deque
+                    enterLIneVar(sub2, &deque, &sizeDeque);
+                    prev = 0;
+                    break;
+                }
                 if (line[pos] == '=') {
                     // entering all the line to the deque after removing the spaces
                     enterLine('=', &deque, pos, &prev, line, &sizeDeque);
@@ -247,6 +260,29 @@ string *lexer(char *argv[]) {
     }
     fclose(file);
     return array;
+}
+
+void enterLIneVar(string s, deque <string> *deque, int *sizeDeque) {
+    s = edit(s);
+    size_t prev = 0;
+    size_t pos = s.find_first_of(" -=<", prev);
+    string name = s.substr(prev, pos);
+    string direction, sim;
+    if (s[pos] == '=') {
+        direction = s.substr(pos, 1);
+        pos = pos + 1;
+        sim = s.substr(pos, s.length());
+    } else {
+        // in case of <- / ->
+        direction = s.substr(pos, 2);
+        pos = pos + 2;
+        sim = s.substr(pos + 4, s.length() - pos - 5);
+    }
+    // entering to the deque
+    deque->push_back(name);
+    deque->push_back(direction);
+    deque->push_back(sim);
+    *sizeDeque = *sizeDeque + 3;
 }
 
 /** in case we have an equals sign or parenthesis - entering all the line to the deque after removing the spaces **/

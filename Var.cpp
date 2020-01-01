@@ -4,6 +4,15 @@
 
 std::mutex mutex_lock;
 
+/** a var has a name, sim, direction and a value.
+ * we use the value of the var in order to know the values of the vars defined in the
+ * text file.
+ * if the direction in towards outside we will want to update the flight simulator according to the
+ * values of the vars we created in our program.
+ * if the direction in towards inside we will get the value of the var from the flight simulator.
+ * we might create a var and want to assign a value we choose, in this case we will see the equals sign
+ * and use the shunting yard in order to calculate it.
+ */
 Var::Var(string nameIn, string simIn, string inoutIn) {
     this->name = nameIn;
     if (inoutIn == "->") {
@@ -15,10 +24,6 @@ Var::Var(string nameIn, string simIn, string inoutIn) {
         this->inout = "";
     }
     this->sim = simIn;
-}
-
-string Var::getName() {
-    return this->name;
 }
 
 float Var::getValue() {

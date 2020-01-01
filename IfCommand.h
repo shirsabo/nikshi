@@ -10,7 +10,9 @@
 class IfCommand: public ConditionParser {
 public:
     IfCommand(unordered_map<string, Command *> *mapCommandIn, unordered_map <string, Var*>* varTableIn);
+
     int execute(string*) ;
+
     ~IfCommand();
 };
 

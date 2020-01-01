@@ -11,7 +11,6 @@
 #include <arpa/inet.h>
 #include <cstring>
 #include <unistd.h>
-#include <thread>
 
 using namespace std;
 
@@ -21,15 +20,7 @@ ConnectCommand::ConnectCommand(unordered_map<string, Var *> *pMap) {
 
 /** executing the command - creating a client **/
 int ConnectCommand::execute(string *s) {
-    /*
-    thread t3;
-    thread t4;
-    Command *c, *m;
-    ConnectCommand *m2;
-    m2 = ((ConnectCommand *) m);
-    t4 = thread(&ConnectCommand::connection, ref(m2),*(s+1));
-    t4.join();
-     */
+    string s4 = *s;
     return 2;
 }
 
@@ -38,7 +29,8 @@ void ConnectCommand::connection(string *s) {
     int client_socket1 = socket(AF_INET, SOCK_STREAM, 0);
     if (client_socket1 == -1) {
         //error
-        std::cerr << "Could not create a socket" << std::endl;
+        cerr << "Could not create a socket" << std::endl;
+        exit(1);
     }
     string local_host = s->substr(1, s->find(',') - 2);
     const char *s1 = local_host.c_str();
@@ -52,7 +44,8 @@ void ConnectCommand::connection(string *s) {
     address.sin_port = htons((int)host);
     int is_connect = connect(client_socket1, (struct sockaddr *) &address, sizeof(address));
     if (is_connect == -1) {
-        std::cerr << "Could not connect to host server" << std::endl;
+        cerr << "Could not connect to host server" << std::endl;
+        exit(1);
     }
     clientSetter(client_socket1);
 }
@@ -66,7 +59,7 @@ void ConnectCommand::changeValue(string sim, double value) {
     // sending the value to the client so the var's value will change in the simulator
     int is_sent = send(this->client_socket, send1.c_str(), strlen(send1.c_str()), 0);
     if (is_sent == -1) {
-        std::cout << "Error sending message" << std::endl;
+        cerr << "Error sending message" << std::endl;
     }
 }
 

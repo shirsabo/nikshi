@@ -26,8 +26,6 @@ public:
 
     bool checkCondition(string *original);
 
-    static bool isNumber(string s);
-
     int executeHelper(string *s);
 
     //double useShuntingYard(string *s);

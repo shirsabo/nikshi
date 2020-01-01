@@ -13,11 +13,13 @@ AssignCommand::AssignCommand(unordered_map<string, Var *> *varTableIn, ConnectCo
     this->varTable = varTableIn;
     this->connectCommand = connectIn;
 }
+
+/** changing a value of a var by calculating the value in the shunting yard **/
 int AssignCommand::execute(std::__cxx11::string * s) {
     string check = *(s-2);
     auto pos = varTable->find(*(s-2));
     if (pos == varTable->end()) {
-        cout << "error - can't find the val in assignCommand"<<endl;
+        cout << "error - can't find the val " + *(s-2)+ " in assignCommand"<<endl;
     } else{
         double val = ShuntingYard::useShuntingYard(s, this->varTable);
         pos->second->setValue(val);

@@ -11,6 +11,8 @@ SleepCommand::SleepCommand(unordered_map<string, Var *> *pMap) {
     this->varTable = pMap;
 }
 
+/** calculating the number of seconds we want to sleep by the shunting yard.
+ * making the thread sleep that long.**/
 int SleepCommand::execute(string *s) {
     string check = *s;
     float calc = ShuntingYard::useShuntingYard(s, this->varTable);
