@@ -50,12 +50,14 @@ Note: in this program only single Command* is Created for each type of Command.
   void parser(unordered_map<string, Command *> *mp, string *array, int size, int *offWhileServer)
 ```
 one of the main functions of this program, in here all the threads created:
+
 | Thread | Function |
 | ------ | ------ |
 | thread t1(&OpenServerCommand::acceptence, ref((c1)), &(array[index + 1])) | waiting until acceptence from server |
 |  thread t2(&OpenServerCommand::initializeServerMap, ref((c1))) |  initialize server map|
 |thread t3(&OpenServerCommand::dataEntryPoint, ref((c1))) | while loop that is "alive" after acceptence until exit 0, in this thread the program gets updates from server|
 | thread t4(&ConnectCommand::connection, ref(m2), &array[index + 1]) | make a connection as a client to the simulator|
+
 after creating threads the program calls to 
 ```sh
    iterateParser(size, mp, &index, array);
