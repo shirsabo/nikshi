@@ -12,7 +12,8 @@
 
 class LoopCommand : public ConditionParser {
 public:
-    LoopCommand(unordered_map<string, Command *> *mapCommandIn, unordered_map <string, Var*>* varTableIn);
+    LoopCommand(unordered_map<string, Command *> *mapCommandIn, unordered_map<string, Var *> *varTableIn,
+                mutex *varmutex);
 
     int execute(string *string);
 

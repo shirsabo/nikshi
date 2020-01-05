@@ -24,7 +24,7 @@ DefineVarCommand::DefineVarCommand(unordered_map<string, Var *> *varTableIn, uno
 int DefineVarCommand::execute(string *s) {
     string check = *s;
     string checkSim = *(s + 2);
-    std::lock_guard<std::mutex> guard(*mute_t);
+    //locking var table!
     if (checkForErrow(s)) {
         // there are -> / <-
         Var *var_server;
@@ -38,13 +38,13 @@ int DefineVarCommand::execute(string *s) {
             newVar->setValue(0);
             this->varTable->insert({*s, newVar});
         }
-        mute_t->unlock();
         return 4;
     } else if (checkForEqual(s) == 2) {
         string name = *s;
         string next = *(s + 1);
         double val = ShuntingYard::useShuntingYard((s + 2), this->varTable);
         // x = val
+        std::lock_guard<std::mutex> guard(*mute_t);
         auto pos = varTable->find(*s);
         if (pos == varTable->end()) {
             Var *newVar = new Var(name, "", "");
@@ -85,6 +85,7 @@ int DefineVarCommand::checkForEqual(string *s) {
  * returning the var if found and nullptr otherwise **/
 Var *DefineVarCommand::checkInServerMap(string *s) {
     string check = *s;
+    //locking server map!
     std::lock_guard<std::mutex> guard(*mute_s);
     auto pos = server_map->find(*s);
     if (pos == server_map->end()) {

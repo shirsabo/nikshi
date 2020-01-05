@@ -2,8 +2,6 @@
 #include <string>
 #include <mutex>
 
-std::mutex mutex_lock;
-
 /** a var has a name, sim, direction and a value.
  * we use the value of the var in order to know the values of the vars defined in the
  * text file.
@@ -31,15 +29,13 @@ float Var::getValue() {
 }
 
 void Var::setValue(float val) {
-    mutex_lock.lock();
     this->value = val;
-    mutex_lock.unlock();
 }
 
-string Var::getArrow(){
+string Var::getArrow() {
     return this->inout;
 }
 
-string Var::getSim(){
+string Var::getSim() {
     return this->sim;
 }

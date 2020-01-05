@@ -11,14 +11,16 @@
 #include "Command.h"
 #include "Var.h"
 #include <map>
+#include <mutex>
 
 using namespace std;
 
 class SleepCommand : public Command {
 private:
     unordered_map<string, Var *> *varTable;
+    mutex *varMute;
 public:
-    SleepCommand(unordered_map<string, Var *> *pMap);
+    SleepCommand(unordered_map<string, Var *> *pMap, mutex *varMuteIn);
 
     int execute(string *);
 };

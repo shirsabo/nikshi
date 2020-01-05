@@ -6,9 +6,11 @@
 #include "Command.h"
 #include "ConditionParser.h"
 
-IfCommand::IfCommand(unordered_map<string, Command *> *mapCommandIn, unordered_map<string, Var *> *varTableIn) {
+IfCommand::IfCommand(unordered_map<string, Command *> *mapCommandIn, unordered_map<string, Var *> *varTableIn,
+                     mutex *varMutexIn) {
     this->commandMap = mapCommandIn;
     this->varTable = varTableIn;
+    this->varMuutex = varMutexIn;
 }
 
 /** uses the executeHelper func of ConditionParser, returning from it the number of steps

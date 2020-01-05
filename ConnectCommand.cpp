@@ -14,8 +14,9 @@
 
 using namespace std;
 
-ConnectCommand::ConnectCommand(unordered_map<string, Var *> *pMap) {
+ConnectCommand::ConnectCommand(unordered_map<string, Var *> *pMap, mutex *varMutexIn) {
     this->varTable = pMap;
+    this->varMutex = varMutexIn;
 }
 
 /** executing the command - creating a client **/
@@ -40,8 +41,10 @@ void ConnectCommand::connection(string *s) {
     address.sin_family = AF_INET;//IP4
     address.sin_addr.s_addr = inet_addr(s1);  //the localhost address
     // calculating the local_host
+    std::lock_guard<std::mutex> guard(*varMutex);
     float host = ShuntingYard::useShuntingYard(&port, this->varTable);
-    address.sin_port = htons((int)host);
+    varMutex->unlock();
+    address.sin_port = htons((int) host);
     int is_connect = connect(client_socket1, (struct sockaddr *) &address, sizeof(address));
     if (is_connect == -1) {
         cerr << "Could not connect to host server" << std::endl;
@@ -77,6 +80,6 @@ string ConnectCommand::editSim(string *sim) {
 }
 
 /** closing the client socket **/
-ConnectCommand:: ~ConnectCommand() {
+ConnectCommand::~ConnectCommand() {
     close(this->client_socket);
 }

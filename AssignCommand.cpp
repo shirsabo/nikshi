@@ -9,18 +9,20 @@
 #include <unordered_map>
 #include "ConnectCommand.h"
 
-AssignCommand::AssignCommand(unordered_map<string, Var *> *varTableIn, ConnectCommand *connectIn) {
+AssignCommand::AssignCommand(unordered_map<string, Var *> *varTableIn, ConnectCommand *connectIn, mutex *varMutexIn) {
     this->varTable = varTableIn;
     this->connectCommand = connectIn;
+    this->varMutex = varMutexIn;
 }
 
 /** changing a value of a var by calculating the value in the shunting yard **/
-int AssignCommand::execute(std::__cxx11::string * s) {
-    string check = *(s-2);
-    auto pos = varTable->find(*(s-2));
+int AssignCommand::execute(std::__cxx11::string *s) {
+    string check = *(s - 2);
+    std::lock_guard<std::mutex> guard(*varMutex);
+    auto pos = varTable->find(*(s - 2));
     if (pos == varTable->end()) {
-        cout << "error - can't find the val " + *(s-2)+ " in assignCommand"<<endl;
-    } else{
+        cout << "error - can't find the val " + *(s - 2) + " in assignCommand" << endl;
+    } else {
         double val = ShuntingYard::useShuntingYard(s, this->varTable);
         pos->second->setValue(val);
         // checking if there is an arrow out and we need to inform the server
@@ -29,6 +31,7 @@ int AssignCommand::execute(std::__cxx11::string * s) {
             connectCommand->changeValue(pos->second->getSim(), val);
         }
     }
+    varMutex->unlock();
     // jump over =, value (no need to jump over the name)
     return 2;
 }

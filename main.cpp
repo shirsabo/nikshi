@@ -75,12 +75,16 @@ int main(int argsc, char *argv[]) {
 /** deleting the commands and the vars **/
 void deleteProject(unordered_map<string, Var *> *serverMap, unordered_map<string, Var *> *varTable,
                    unordered_map<string, Command *> *mp) {
+    std::lock_guard<std::mutex> guard(s_map_mutex);
     for (auto &iter:*serverMap) {
         delete iter.second;
     }
+    s_map_mutex.unlock();
+    std::lock_guard<std::mutex> guard1(v_map_mutex);
     for (auto &iter:*varTable) {
         delete iter.second;
     }
+    v_map_mutex.unlock();
     for (auto &iter:*mp) {
         delete iter.second;
     }
@@ -151,15 +155,15 @@ void iterateParser(int size, unordered_map<string, Command *> *mp, int *index, s
 /** creating a map of commands with the suitable keys according to specific words in the text file **/
 void createMap(unordered_map<string, Command *> *pMap, unordered_map<string, Var *> *varTable,
                unordered_map<string, Var *> *server_map, int *offWhileServer) {
-    OpenServerCommand *openCommand = new OpenServerCommand(server_map, offWhileServer);
-    ConnectCommand *connect = new ConnectCommand(varTable);
+    OpenServerCommand *openCommand = new OpenServerCommand(server_map, offWhileServer, &s_map_mutex);
+    ConnectCommand *connect = new ConnectCommand(varTable, &v_map_mutex);
     DefineVarCommand *varCommand = new DefineVarCommand(varTable, server_map, &s_map_mutex, &v_map_mutex);
-    PrintCommand *print = new PrintCommand(varTable);
-    SleepCommand *sleep = new SleepCommand(varTable);
-    AssignCommand *assign = new AssignCommand(varTable, connect);
+    PrintCommand *print = new PrintCommand(varTable, &v_map_mutex);
+    SleepCommand *sleep = new SleepCommand(varTable, &v_map_mutex);
+    AssignCommand *assign = new AssignCommand(varTable, connect, &v_map_mutex);
     //must be the last one we enter because it has a map of the commands too
-    ConditionParser *ifCommand = new IfCommand(pMap, varTable);
-    ConditionParser *loopCommand = new LoopCommand(pMap, varTable);
+    ConditionParser *ifCommand = new IfCommand(pMap, varTable, &v_map_mutex);
+    ConditionParser *loopCommand = new LoopCommand(pMap, varTable, &v_map_mutex);
     // entering all the command and their keys to the map
     pMap->insert(pair<string, Command *>("openDataServer", openCommand));
     pMap->insert(pair<string, Command *>("connectControlClient", connect));
@@ -238,7 +242,6 @@ string *lexer(char *argv[]) {
             }
             line = line.substr(pos + 1, line.length());
             prev = 0;
-            //prev = pos + 1;
         }
         if ((line[0] == ' ') || (line[0] == ',') || (line[0] == '(') || (line[0] == ')') || (line[0] == '\t')) {
             line = line.substr(1, line.length());
@@ -262,6 +265,7 @@ string *lexer(char *argv[]) {
     return array;
 }
 
+/** in case we have a var - entering all the line to the deque after separating the string as needed**/
 void enterLIneVar(string s, deque <string> *deque, int *sizeDeque) {
     s = edit(s);
     size_t prev = 0;

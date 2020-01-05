@@ -17,9 +17,11 @@ int OpenServerCommand::execute(string *s) {
     return 2;
 }
 
-OpenServerCommand::OpenServerCommand(std::unordered_map<string, Var *> *pMap, int *offWhileServerIn) {
+OpenServerCommand::OpenServerCommand(std::unordered_map<string, Var *> *pMap,
+                                     int *offWhileServerIn, mutex *muteServerMap) {
     this->varTable = pMap;
     this->offWhileServer = offWhileServerIn;
+    this->muteServer = muteServerMap;
 }
 
 /** receiving the information from the server and updating the var's values until we finish readinf
@@ -97,7 +99,7 @@ void OpenServerCommand::acceptence(string *s) {
         cerr << "Bad connedction\n";
         exit(1);
     }
-//waiting until connection
+    //waiting until connection
     // accepting a client
     int client_socket1 = accept(socketfd, (struct sockaddr *) &address,
                                 (socklen_t *) &address);
@@ -130,7 +132,6 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
             }
             return "\"/instrumentation/airspeed-indicator/indicated-speed-kt\"";
         case 5:
-            //
             if (firstTime) {
                 varTemp = new Var("altimeter_indicated-altitude-ft",
                                   "/instrumentation/altimeter/indicated-altitude-ft", "<-");
@@ -139,7 +140,6 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
             }
             return "\"/instrumentation/altimeter/indicated-altitude-ft\"";
         case 6:
-            //
             if (firstTime) {
                 varTemp = new Var("altimeter_pressure-alt-ft",
                                   "/instrumentation/altimeter/pressure-alt-ft", "<-");
@@ -171,7 +171,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/instrumentation/attitude-indicator/internal-roll-deg\"", varTemp});
             }
             return "\"/instrumentation/attitude-indicator/internal-roll-deg\"";
-        case 2://
+        case 2:
             if (firstTime) {
                 varTemp = new Var("time_warp",
                                   "/sim/time/warp", "<-");
@@ -179,7 +179,7 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
                 this->varTable->insert({"\"/sim/time/warp\"", varTemp});
             }
             return "\"/sim/time/warp\"";
-        case 3://
+        case 3:
             if (firstTime) {
                 varTemp = new Var("switches_magnetos",
                                   "/controls/switches/magnetos", "<-");
@@ -416,12 +416,12 @@ string OpenServerCommand::initializeVars(string sub, int i, bool firstTime) {
     }
 }
 
-
 /** updating the var's values according to the buffer we got from the server **/
 void OpenServerCommand::notFirstRead(string sub, int i) {
     string sim;
     sim = initializeVars(sub, i, false);
     // finding the var from the server map
+    std::lock_guard<std::mutex> guard(*muteServer);
     if (this->varTable == NULL) {
         std::cout << "eror openServerCommand" << endl;
     }
@@ -432,6 +432,7 @@ void OpenServerCommand::notFirstRead(string sub, int i) {
     } else {
         pos->second->setValue(stof(sub));
     }
+    (*muteServer).unlock();
 }
 
 /** reading the information from the server char by char until finding /n,

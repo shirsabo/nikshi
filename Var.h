@@ -6,7 +6,9 @@
 #define EX3_VAR_H
 
 #include <string>
+
 using namespace std;
+
 class Var {
 private:
     double value = 0;
@@ -25,4 +27,5 @@ public:
 
     string getSim();
 };
+
 #endif //EX3_VAR_H

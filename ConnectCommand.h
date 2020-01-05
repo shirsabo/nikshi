@@ -11,13 +11,15 @@
 #include "Var.h"
 #include <string>
 #include <unordered_map>
+#include <mutex>
 
 class ConnectCommand : public Command {
 private:
     unordered_map<string, Var *> *varTable;
     int client_socket = 0;
+    mutex *varMutex;
 public:
-    ConnectCommand(unordered_map<string, Var *> *pMap);
+    ConnectCommand(unordered_map<string, Var *> *pMap, mutex *varMutex);
 
     int execute(string *);
 

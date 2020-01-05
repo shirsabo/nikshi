@@ -11,14 +11,16 @@
 #include "Command.h"
 #include "Var.h"
 #include <deque>
+#include <mutex>
 
 class OpenServerCommand: public Command {
 private:
     unordered_map<string, Var *> *varTable;
     int *offWhileServer;
     int client_socket;
+    mutex* muteServer;
 public:
-    OpenServerCommand(std::unordered_map<string, Var *> *pMap, int *offWhileServer);
+    OpenServerCommand(std::unordered_map<string, Var *> *pMap, int *offWhileServer,mutex* muteServerMap);
 
     virtual int execute(string*);
 

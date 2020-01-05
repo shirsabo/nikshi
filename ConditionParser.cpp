@@ -29,12 +29,14 @@ bool ConditionParser::checkCondition(string *original) {
 
     float y = 0, x = 0;
     // calculating using the shunting yard
+  std::lock_guard<std::mutex> guard(*varMuutex);
     x = ShuntingYard::useShuntingYard(original, this->varTable);
     // moving to the sign
     string *sign = original + 1;
     // moving to the next word
     original = original + 2;
     y = ShuntingYard::useShuntingYard(original, this->varTable);
+    varMuutex->unlock();
     if (*sign == "==") {
         if (x == y) {
             return true;

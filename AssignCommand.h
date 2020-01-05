@@ -11,12 +11,13 @@
 #include "Command.h"
 #include "ConnectCommand.h"
 
-class AssignCommand: public Command {
+class AssignCommand : public Command {
 private:
     unordered_map<string, Var *> *varTable;
     ConnectCommand *connectCommand;
+    mutex *varMutex;
 public:
-    AssignCommand(unordered_map<string, Var *> *varTable, ConnectCommand *connectIn);
+    AssignCommand(unordered_map<string, Var *> *varTable, ConnectCommand *connectIn, mutex *varMutex);
 
     int execute(string *s);
 };

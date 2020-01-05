@@ -5,9 +5,11 @@
 #include "LoopCommand.h"
 #include "Command.h"
 
-LoopCommand::LoopCommand(unordered_map<string, Command *> *mapCommandIn, unordered_map<string, Var *> *varTableIn) {
+LoopCommand::LoopCommand(unordered_map<string, Command *> *mapCommandIn, unordered_map<string, Var *> *varTableIn,
+                         mutex *varMutexIn) {
     this->commandMap = mapCommandIn;
     this->varTable = varTableIn;
+    this->varMuutex = varMutexIn;
 }
 
 /** uses the executeHelper func of ConditionParser.

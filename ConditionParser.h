@@ -4,23 +4,24 @@
 
 #ifndef EX3_CONDITIONPARSER_H
 #define EX3_CONDITIONPARSER_H
+
 #include "Command.h"
 #include "Var.h"
-//#include "IfCommand.h"
-//#include "LoopCommand.h"
 #include <unordered_map>
 #include <functional>
+#include <mutex>
 
-class ConditionParser: public Command {
+class ConditionParser : public Command {
 private:
     bool condition = false;
 public:
+    mutex *varMuutex;
     unordered_map<string, Command *> *commandMap;
-    unordered_map <string, Var*>* varTable;
+    unordered_map<string, Var *> *varTable;
 
-    void parser(unordered_map<string, Command*>* mp, string *array, int size);
+    void parser(unordered_map<string, Command *> *mp, string *array, int size);
 
-    virtual int execute(string* s) = 0;
+    virtual int execute(string *s) = 0;
 
     ~ConditionParser();
 
@@ -28,8 +29,7 @@ public:
 
     int executeHelper(string *s);
 
-    //double useShuntingYard(string *s);
-
     bool getCondition();
 };
+
 #endif //EX3_CONDITIONPARSER_H

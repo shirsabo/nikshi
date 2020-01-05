@@ -7,12 +7,15 @@
 
 #include <iostream>
 #include <string>
+
 using namespace std;
 
 class Command {
 
 public:
-     virtual int execute(string *) = 0;
-     virtual ~Command() {}
+    virtual int execute(string *) = 0;
+
+    virtual ~Command() {}
 };
+
 #endif //EX3_COMMAND_H

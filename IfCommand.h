@@ -4,14 +4,18 @@
 
 #ifndef EX3_IFCOMMAND_H
 #define EX3_IFCOMMAND_H
+
 #include "ConditionParser.h"
 #include "Command.h"
 #include <unordered_map>
-class IfCommand: public ConditionParser {
-public:
-    IfCommand(unordered_map<string, Command *> *mapCommandIn, unordered_map <string, Var*>* varTableIn);
+#include <mutex>
 
-    int execute(string*) ;
+class IfCommand : public ConditionParser {
+public:
+    IfCommand(unordered_map<string, Command *> *mapCommandIn, unordered_map<string, Var *> *varTableIn,
+              mutex *varMutex);
+
+    int execute(string *);
 
     ~IfCommand();
 };

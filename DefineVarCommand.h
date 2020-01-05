@@ -19,7 +19,8 @@ private:
     mutex * mute_s;
     mutex * mute_t;
 public:
-    DefineVarCommand(unordered_map <string, Var*>* varTable,  unordered_map<string, Var *> *server_map,mutex* muteServerMap,mutex* varMute);
+    DefineVarCommand(unordered_map <string, Var*>* varTable,  unordered_map<string, Var *> *server_map,
+                     mutex *muteServerMap,mutex* varMute);
 
     int execute(string *);
 

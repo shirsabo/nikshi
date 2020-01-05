@@ -8,12 +8,14 @@
 #include "Command.h"
 #include "Var.h"
 #include <unordered_map>
+#include <mutex>
 
 class PrintCommand: public Command {
 private:
     unordered_map <string, Var*>* varTable;
+    mutex* varMute;
 public:
-    PrintCommand(unordered_map <string, Var*>* varTable);
+    PrintCommand(unordered_map <string, Var*>* varTable,mutex* varMute);
 
     int execute(string* print);
 };

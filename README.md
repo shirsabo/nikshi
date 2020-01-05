@@ -1,7 +1,16 @@
-# Assignment 3 
+# Assignment 3
+### Our github page:
+https://github.com/nikolbashirsa/nikshi
 in this project we were asked to connect the server of "Flightgear" and read values from it and also to connect as a Client and actually send the server updates about variables in the game's algorithm, all that according to "fly.txt".
-
--this project has a serious amount of code and because of that this file will make everything clear to you.
+### How to compile?
+```sh
+g++ -std=c++14 *.cpp -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic -o a.out -pthread
+```
+### How to run?
+```sh
+./a.out fly.txt
+```
+- this project has a serious amount of code and because of that this file will make everything clear to you.
 ### The main
 >The lexer
 ```sh
@@ -49,6 +58,7 @@ Note: in this program only single Command* is Created for each type of Command.
 ```sh
   void parser(unordered_map<string, Command *> *mp, string *array, int size, int *offWhileServer)
 ```
+
 one of the main functions of this program, in here all the threads created:
 
 | Thread | Function |
@@ -58,7 +68,7 @@ one of the main functions of this program, in here all the threads created:
 |thread t3(&OpenServerCommand::dataEntryPoint, ref((c1))) | while loop that is "alive" after acceptence until exit 0, in this thread the program gets updates from server|
 | thread t4(&ConnectCommand::connection, ref(m2), &array[index + 1]) | make a connection as a client to the simulator|
 
-after creating threads the program calls to 
+after creating threads the program calls to
 ```sh
    iterateParser(size, mp, &index, array);
 ```
@@ -68,7 +78,7 @@ after creating threads the program calls to
         throw "problem with lexer;
         } else {
             Command *c = pos->second;
-            *index += c->execute(&array[*index + 1]); 
+            *index += c->execute(&array[*index + 1]);
 
 as we can see ' here we are calling to the "Execute" function, and by that all the command are executed.
 ```sh
@@ -114,7 +124,7 @@ Note that  it kmows the varTable.
 IfCommand::IfCommand(unordered_map<string, Command *> *mapCommandIn, unordered_map<string, Var *> *varTableIn)
  ```
   ```sh
-int IfCommand::execute(string *s) 
+int IfCommand::execute(string *s)
  ```
  uses the executeHelper func of ConditionParser, returning from it the number of steps we need to jump in the array until the end of the parenthesis.
 
@@ -150,10 +160,10 @@ Install the dependencies and devDependencies and start the server.
  ```sh
  void ConditionParser::parser(unordered_map<string, Command *> *mp, string *array, int size)
   ```
-  going through the commands between the parenthesis and executing them 
+  going through the commands between the parenthesis and executing them
 For production environments.
  ```sh
- bool ConditionParser::checkCondition(string *original) 
+ bool ConditionParser::checkCondition(string *original)
    ```
 checking the condition of the Command so we will know if to execute the commands inside the parenthesis.
 ```sh
@@ -217,7 +227,7 @@ void ConnectCommand::connection(string *s);
  connecting to the client, printing a message if could not connect to host server and exiting.
  ```sh
  void ConnectCommand::changeValue(string sim, double value) ;
- ``` 
+ ```
  changing a var's value in the simulator according to the text file.
   ```sh
 void ConnectCommand::clientSetter(int socket);
@@ -232,4 +242,3 @@ void ConnectCommand::clientSetter(int socket);
   ConnectCommand:: ~ConnectCommand()
    ```
 closing the client socket.
-

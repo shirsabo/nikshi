@@ -3,22 +3,26 @@
 #include <string>
 #include <iostream>
 #include <stdio.h>
+#include <mutex>
 //
 // Created by nikol on 12/12/2019.
 //
 using namespace std;
 
-PrintCommand::PrintCommand(unordered_map <string, Var*> * varTableIn) {
+PrintCommand::PrintCommand(unordered_map <string, Var*> * varTableIn,mutex* varMuteIn) {
     this->varTable = varTableIn;
+    this->varMute = varMuteIn;
 }
 
 /** printing a sentence or a number we calculate using the shunting yard **/
-int PrintCommand::execute(std::__cxx11::string *print) {
+int PrintCommand::execute(string *print) {
     int index = 2;
     string s = *print;
     // checking if it's a string or a variable
     if ((s).find("\"") == string::npos) {
+        std::lock_guard<std::mutex> guard(*varMute);
         float calc = ShuntingYard::useShuntingYard(print, this->varTable);
+        varMute->unlock();
         printf ("%f\n", calc);
         return index;
     }
