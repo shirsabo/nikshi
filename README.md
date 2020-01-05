@@ -61,6 +61,7 @@ Note: in this program only single Command* is Created for each type of Command.
 ```
 
 one of the main functions of this program, in here all the threads created:
+
 | Thread | Function |
 | ------ | ------ |
 | thread t1(&OpenServerCommand::acceptence, ref((c1)), &(array[index + 1])) | waiting until acceptence from server |
