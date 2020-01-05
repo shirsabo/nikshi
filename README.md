@@ -1,7 +1,17 @@
 # Assignment 3 
 in this project we were asked to connect the server of "Flightgear" and read values from it and also to connect as a Client and actually send the server updates about variables in the game's algorithm, all that according to "fly.txt".
+### How to compile?
+```sh
+g++ -std=c++14 *.cpp -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic -o a.out -pthread
+```
+### How to run?
+```sh
+./a.out fly.txt
+```
+### Our github page:
+https://github.com/nikolbashirsa/nikshi
 
--this project has a serious amount of code and because of that this file will make everything clear to you.
+- this project has a serious amount of code and because of that this file will make everything clear to you.
 ### The main
 >The lexer
 ```sh
@@ -49,8 +59,8 @@ Note: in this program only single Command* is Created for each type of Command.
 ```sh
   void parser(unordered_map<string, Command *> *mp, string *array, int size, int *offWhileServer)
 ```
-one of the main functions of this program, in here all the threads created:
 
+one of the main functions of this program, in here all the threads created:
 | Thread | Function |
 | ------ | ------ |
 | thread t1(&OpenServerCommand::acceptence, ref((c1)), &(array[index + 1])) | waiting until acceptence from server |
