@@ -1,6 +1,5 @@
 # Assignment 3
-### Our github page:
-https://github.com/nikolbashirsa/nikshi
+
 in this project we were asked to connect the server of "Flightgear" and read values from it and also to connect as a Client and actually send the server updates about variables in the game's algorithm, all that according to "fly.txt".
 ### How to compile?
 ```sh
