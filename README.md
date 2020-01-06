@@ -9,6 +9,8 @@ g++ -std=c++14 *.cpp -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic -o a.ou
 ```sh
 ./a.out fly.txt
 ```
+Link to our page:
+https://github.com/nikolbashirsa/nikshi
 - this project has a serious amount of code and because of that this file will make everything clear to you.
 ### The main
 >The lexer
